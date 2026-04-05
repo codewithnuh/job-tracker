@@ -10,7 +10,7 @@ export const CACHE_TAGS = {
 
 export function revalidateApplications() {
   revalidateTag(CACHE_TAGS.APPLICATIONS);
-  revalidatePath("/applications");
+  revalidatePath("/dashboard/applications");
   revalidatePath("/dashboard");
 }
 
@@ -31,7 +31,7 @@ export function revalidateStats() {
 
 export function revalidateUser() {
   revalidateTag(CACHE_TAGS.USER);
-  revalidatePath("/profile");
+  revalidatePath("/dashboard");
 }
 
 export function revalidateAll() {

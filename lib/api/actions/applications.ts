@@ -35,7 +35,7 @@ export async function createApplicationAction(
     const input: CreateApplicationInput = {
       companyName,
       roleTitle,
-      status: (formData.get("status") as string) || undefined,
+      status: (formData.get("status") as ApplicationStatus) || undefined,
       location: (formData.get("location") as string) || undefined,
       jobUrl: (formData.get("jobUrl") as string) || undefined,
       salaryMin: formData.get("salaryMin")
@@ -104,8 +104,8 @@ export async function getApplicationsAction(
 
     return {
       success: true,
-      data: response.data || [],
-      meta: response.meta as PaginationMeta | undefined,
+      data: response.data?.data || [],
+      meta: response.data?.meta as PaginationMeta | undefined,
     };
   } catch (error) {
     if (error instanceof Error) {
