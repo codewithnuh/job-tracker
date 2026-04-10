@@ -1,31 +1,24 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
-const protectedRoutes = ["/dashboard"]
-const authRoutes = ["/login", "/register"]
-
 export function proxy(request: NextRequest) {
-  const token = request.cookies.get("auth_token")?.value
+  const token = request.cookies.get("token")?.value
   const { pathname } = request.nextUrl
 
-  const isProtectedRoute = protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`)
-  )
-  const isAuthRoute = authRoutes.includes(pathname)
+  const isAuthRoute = pathname === "/login" || pathname === "/register"
 
-  if (isProtectedRoute && !token) {
-    const loginUrl = new URL("/login", request.url)
-    loginUrl.searchParams.set("callbackUrl", pathname)
-    return NextResponse.redirect(loginUrl)
+  if (isAuthRoute) {
+    return NextResponse.next()
   }
 
-  if (isAuthRoute && token) {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
+  if (!token) {
+    const loginUrl = new URL("/login", request.url)
+    return NextResponse.redirect(loginUrl)
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 }

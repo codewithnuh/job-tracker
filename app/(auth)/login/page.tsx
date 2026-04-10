@@ -1,6 +1,7 @@
 "use client"
 
 import { useActionState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -18,6 +19,7 @@ import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { loginAction } from "@/lib/api/actions/auth"
 
 export default function LoginPage() {
+  const router = useRouter()
   const [state, formAction, isPending] = useActionState(loginAction, {
     success: false,
     message: "",
@@ -27,7 +29,14 @@ export default function LoginPage() {
     if (!isPending && state.message && !state.success) {
       toast.error(state.message)
     }
-  }, [state, isPending])
+
+    if (state.success && state.cookies) {
+      Object.entries(state.cookies).forEach(([name, value]) => {
+        document.cookie = `${name}=${value}; path=/; max-age=604800`
+      })
+      router.push("/")
+    }
+  }, [state, isPending, router])
 
   return (
     <Card>

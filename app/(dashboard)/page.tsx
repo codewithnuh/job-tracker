@@ -62,7 +62,10 @@ export default async function DashboardPage() {
     getApplicationsAction({ page: 1, limit: 5 }),
   ])
 
-  const stats = statsResult.success && statsResult.data ? statsResult.data : { totalApplications: 0, byStatus: {} }
+  const stats =
+    statsResult.success && statsResult.data
+      ? statsResult.data
+      : { totalApplications: 0, byStatus: {} }
   const recentApps = appsResult.success ? appsResult.data || [] : []
 
   return (
@@ -77,7 +80,7 @@ export default async function DashboardPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/dashboard/applications/add">
+          <Link href="/applications/add">
             <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
             Add Application
           </Link>
@@ -107,7 +110,7 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between">
             <CardTitle>Recent Applications</CardTitle>
             <Button variant="outline" size="sm" asChild>
-              <Link href="/dashboard/applications">View all</Link>
+              <Link href="/applications">View all</Link>
             </Button>
           </div>
         </CardHeader>
@@ -118,7 +121,7 @@ export default async function DashboardPage() {
                 No applications yet. Add your first one to get started.
               </p>
               <Button className="mt-4" asChild>
-                <Link href="/dashboard/applications/add">
+                <Link href="/applications/add">
                   <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
                   Add Application
                 </Link>

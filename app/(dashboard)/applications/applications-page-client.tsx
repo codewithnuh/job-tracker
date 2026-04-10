@@ -10,6 +10,7 @@ import {
   Search01Icon,
   Delete01Icon,
   Loading01Icon,
+  Trash2,
 } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -82,13 +83,13 @@ export default function ApplicationsPageClient({
       params.delete(key)
     }
     params.set("page", "1")
-    router.push(`/dashboard/applications?${params.toString()}`)
+    router.push(`/applications?${params.toString()}`)
   }
 
   function handlePageChange(page: number) {
     const params = new URLSearchParams(searchParams)
     params.set("page", page.toString())
-    router.push(`/dashboard/applications?${params.toString()}`)
+    router.push(`/applications?${params.toString()}`)
   }
 
   async function handleDelete(id: string) {
@@ -116,7 +117,7 @@ export default function ApplicationsPageClient({
           </p>
         </div>
         <Button asChild>
-          <Link href="/dashboard/applications/add">
+          <Link href="/applications/add">
             <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
             Add Application
           </Link>
@@ -143,18 +144,24 @@ export default function ApplicationsPageClient({
                   onBlur={(e) => handleFilterChange("company", e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      handleFilterChange("company", (e.target as HTMLInputElement).value)
+                      handleFilterChange(
+                        "company",
+                        (e.target as HTMLInputElement).value
+                      )
                     }
                   }}
                 />
               </div>
             </div>
-            <Select value={statusFilter} onValueChange={(v: string) => handleFilterChange("status", v)}>
+            <Select
+              value={statusFilter}
+              onValueChange={(v: string) => handleFilterChange("status", v)}
+            >
               <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="All statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All statuses</SelectItem>
+                <SelectItem value="STATUS">All statuses</SelectItem>
                 {allStatuses.map((s) => (
                   <SelectItem key={s} value={s}>
                     {s.charAt(0) + s.slice(1).toLowerCase()}
@@ -169,7 +176,10 @@ export default function ApplicationsPageClient({
               onBlur={(e) => handleFilterChange("location", e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleFilterChange("location", (e.target as HTMLInputElement).value)
+                  handleFilterChange(
+                    "location",
+                    (e.target as HTMLInputElement).value
+                  )
                 }
               }}
             />
@@ -202,7 +212,7 @@ export default function ApplicationsPageClient({
                   <TableRow key={app.id}>
                     <TableCell className="font-medium">
                       <Link
-                        href={`/dashboard/applications/${app.id}`}
+                        href={`/applications/${app.id}`}
                         className="hover:underline"
                       >
                         {app.companyName}
@@ -237,7 +247,7 @@ export default function ApplicationsPageClient({
                             className="animate-spin"
                           />
                         ) : (
-                          <HugeiconsIcon icon={Trash01Icon} strokeWidth={2} />
+                          <HugeiconsIcon icon={Trash2} strokeWidth={2} />
                         )}
                       </Button>
                     </TableCell>

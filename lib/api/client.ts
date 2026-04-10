@@ -24,7 +24,7 @@ export class ApiError extends Error {
 
 async function getAuthToken(): Promise<string | null> {
   const cookieStore = await cookies()
-  return cookieStore.get("auth_token")?.value || null
+  return cookieStore.get("token")?.value || null
 }
 
 interface FetchOptions extends RequestInit {
@@ -44,9 +44,15 @@ export async function apiFetch<T>(
   } = options
 
   const token = await getAuthToken()
+  const cookieStore = await cookies()
+  const cookieHeader = cookieStore
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ")
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
+    Cookie: cookieHeader, // Send cookies to Fastify
     ...(customHeaders as Record<string, string>),
   }
 

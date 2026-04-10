@@ -1,18 +1,11 @@
 "use server"
 
-import { cookies, headers } from "next/headers"
-import { redirect } from "next/navigation"
 import { apiFetch } from "@/lib/api/client"
 import { revalidateUser } from "@/lib/api/revalidate"
-import type {
-  RegisterInput,
-  LoginInput,
-  User,
-  LoginResponse,
-  MeResponse,
-} from "@/lib/types/api"
-
-const API_BASE_URL = "http://localhost:3000"
+import type { RegisterInput, User, MeResponse } from "@/lib/types/api"
+import { cookies } from "next/headers"
+import { parse } from "set-cookie-parser"
+const API_BASE_URL = "http://localhost:3001"
 
 export async function registerAction(
   _: unknown,
@@ -68,7 +61,7 @@ export async function loginAction(_: unknown, formData: FormData) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
-      // No need for credentials: 'include' here; this is server-to-server
+      cache: "no-store",
     })
 
     if (!response.ok) {
@@ -78,42 +71,43 @@ export async function loginAction(_: unknown, formData: FormData) {
         message: errorData?.message || "Invalid credentials",
       }
     }
-
-    // 1. Get cookies from the Fastify response
-    const setCookieHeader = response.headers.getSetCookie()
     const cookieStore = await cookies()
+    const setCookieHeader = response.headers.getSetCookie()
+    const parsedCookies = parse(setCookieHeader)
+    for (const cookie of parsedCookies) {
+      await cookieStore.set({
+        name: cookie.name,
+        value: cookie.value,
+        path: cookie.path || "/",
 
-    // 2. Manually proxy them to the browser
-    if (setCookieHeader) {
-      setCookieHeader.forEach((cookieString) => {
-        // Simple parsing logic or use a library like 'cookie'
-        const [nameValue] = cookieString.split(";")
-        const [name, value] = nameValue.split("=")
-
-        cookieStore.set(name.trim(), value.trim(), {
-          httpOnly: true,
-          path: "/",
-          // CRITICAL: Disable 'secure' on localhost or it won't save
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        })
+        sameSite: (cookie.sameSite as any) || "strict",
+        expires: cookie.maxAge,
       })
     }
+    const cookiesData: Record<string, string> = {}
+
+    setCookieHeader.forEach((cookieString) => {
+      const [nameValue] = cookieString.split(";")
+      const [name, value] = nameValue.split("=")
+      cookiesData[name.trim()] = value.trim()
+    })
 
     revalidateUser()
+
+    return {
+      success: true,
+      message: "Login successful",
+      cookies: cookiesData,
+    }
   } catch (error) {
-    // Handle specific errors
+    console.error(error)
     return { success: false, message: "Something went wrong" }
   }
-
-  // 3. Redirect MUST be called outside the try/catch block
-  redirect("/dashboard")
 }
 
-export async function logoutAction(): Promise<void> {
-  const cookieStore = await cookies()
-  cookieStore.delete("auth_token")
-  redirect("/login")
+export async function logoutAction() {
+  revalidateUser()
+  return { success: true }
 }
 
 export async function getCurrentUser(): Promise<User | null> {

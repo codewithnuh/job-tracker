@@ -1,7 +1,8 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Logout03Icon, UserIcon } from "@hugeicons/core-free-icons"
+import { Logout03Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,12 +21,21 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ user }: { user: User }) {
+  const router = useRouter()
+
   const initials = user.name
     .split(" ")
     .map((n: string) => n[0])
     .join("")
     .toUpperCase()
     .slice(0, 2)
+
+  const handleLogout = async () => {
+    await logoutAction()
+    document.cookie = "token=; path=/; max-age=0"
+    document.cookie = "refreshToken=; path=/; max-age=0"
+    router.push("/login")
+  }
 
   return (
     <DropdownMenu>
@@ -49,10 +59,7 @@ export function UserMenu({ user }: { user: User }) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => logoutAction()}
-          className="text-destructive"
-        >
+        <DropdownMenuItem onClick={handleLogout} className="text-destructive">
           <HugeiconsIcon icon={Logout03Icon} strokeWidth={2} />
           Logout
         </DropdownMenuItem>
