@@ -1,17 +1,16 @@
-"use client"
+ "use client"
 
-import { useState, useTransition } from "react"
+import { useTransition, useActionState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useFormState } from "react-dom"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowLeft01Icon,
-  Trash01Icon,
+  Trash2,
   Loading01Icon,
   Calendar01Icon,
-  MapPin01Icon,
+  MapPinIcon,
   Link02Icon,
   Money01Icon,
   NoteIcon,
@@ -36,7 +35,8 @@ import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { updateApplicationStatusAction } from "@/lib/api/actions/status"
 import { deleteApplicationAction } from "@/lib/api/actions/applications"
-import type { Application, ApplicationStatus, ActivityLog } from "@/lib/types"
+import { useApplication } from "@/lib/swr/hooks"
+import type { ApplicationStatus } from "@/lib/types"
 
 const statusColors: Record<ApplicationStatus, string> = {
   APPLIED: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
@@ -59,26 +59,26 @@ const allStatuses: ApplicationStatus[] = [
 ]
 
 interface ApplicationDetailPageProps {
-  application: Application
-  activityLog: ActivityLog[]
+  applicationId: string
 }
 
 function StatusUpdateForm({
   applicationId,
   currentStatus,
+  onSuccess,
 }: {
   applicationId: string
   currentStatus: ApplicationStatus
+  onSuccess?: () => void
 }) {
-  const router = useRouter()
-  const [state, formAction, isPending] = useFormState(
+  const [state, formAction, isPending] = useActionState(
     updateApplicationStatusAction,
     { success: false, message: "" }
   )
 
   if (state.success && !isPending) {
     toast.success(state.message)
-    router.refresh()
+    onSuccess?.()
   } else if (!isPending && state.message && !state.success) {
     toast.error(state.message)
   }
@@ -116,14 +116,44 @@ function StatusUpdateForm({
   )
 }
 
+function ApplicationSkeleton() {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Skeleton className="size-10" />
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+      </div>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <Card>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <Skeleton className="h-48" />
+      </div>
+    </div>
+  )
+}
+
 export default function ApplicationDetailPage({
-  application,
-  activityLog,
+  applicationId,
 }: ApplicationDetailPageProps) {
   const router = useRouter()
   const [isDeleting, startDeleteTransition] = useTransition()
+  const { application, isLoading, mutate } = useApplication(applicationId)
 
   async function handleDelete() {
+    if (!application) return
     if (!confirm("Are you sure you want to delete this application?")) return
 
     startDeleteTransition(async () => {
@@ -135,6 +165,18 @@ export default function ApplicationDetailPage({
         toast.error(result.message)
       }
     })
+  }
+
+  if (isLoading) {
+    return <ApplicationSkeleton />
+  }
+
+  if (!application) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Application not found</p>
+      </div>
+    )
   }
 
   return (
@@ -172,7 +214,7 @@ export default function ApplicationDetailPage({
             </>
           ) : (
             <>
-              <HugeiconsIcon icon={Trash01Icon} strokeWidth={2} />
+              <HugeiconsIcon icon={Trash2} strokeWidth={2} />
               Delete
             </>
           )}
@@ -202,7 +244,7 @@ export default function ApplicationDetailPage({
                 </div>
                 <div className="flex items-center gap-3">
                   <HugeiconsIcon
-                    icon={MapPin01Icon}
+                    icon={MapPinIcon}
                     strokeWidth={2}
                     className="text-muted-foreground"
                   />
@@ -223,7 +265,7 @@ export default function ApplicationDetailPage({
                     <div>
                       <p className="text-xs text-muted-foreground">Job URL</p>
                       <a
-                        href={application.jobUrl}
+                        href={application.jobUrl || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary underline-offset-4 hover:underline"
@@ -296,6 +338,7 @@ export default function ApplicationDetailPage({
               <StatusUpdateForm
                 applicationId={application.id}
                 currentStatus={application.status}
+                onSuccess={mutate}
               />
             </CardContent>
           </Card>
@@ -308,51 +351,9 @@ export default function ApplicationDetailPage({
           <CardDescription>History of status changes</CardDescription>
         </CardHeader>
         <CardContent>
-          {activityLog.length === 0 ? (
-            <p className="py-4 text-center text-sm text-muted-foreground">
-              No activity recorded yet.
-            </p>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {activityLog.map((entry, index) => (
-                <div key={entry.id} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="size-2 rounded-full bg-primary" />
-                    {index < activityLog.length - 1 && (
-                      <div className="w-px flex-1 bg-border" />
-                    )}
-                  </div>
-                  <div className="flex-1 pb-4">
-                    <div className="flex items-center gap-2">
-                      {entry.fromStatus ? (
-                        <>
-                          <Badge variant="outline" className="text-xs">
-                            {entry.fromStatus}
-                          </Badge>
-                          <span className="text-muted-foreground">→</span>
-                          <Badge variant="outline" className="text-xs">
-                            {entry.toStatus}
-                          </Badge>
-                        </>
-                      ) : (
-                        <Badge variant="outline" className="text-xs">
-                          {entry.toStatus}
-                        </Badge>
-                      )}
-                    </div>
-                    {entry.note && (
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {entry.note}
-                      </p>
-                    )}
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {new Date(entry.createdAt).toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <p className="py-4 text-center text-sm text-muted-foreground">
+            Activity log not available
+          </p>
         </CardContent>
       </Card>
     </div>

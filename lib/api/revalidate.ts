@@ -1,4 +1,4 @@
-import { revalidateTag, revalidatePath } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache"
 
 export const CACHE_TAGS = {
   APPLICATIONS: "applications",
@@ -6,36 +6,38 @@ export const CACHE_TAGS = {
   ACTIVITY: "activity",
   STATS: "stats",
   USER: "user",
-} as const;
+} as const
+
+const cacheProfile = "default"
 
 export function revalidateApplications() {
-  revalidateTag(CACHE_TAGS.APPLICATIONS);
-  revalidatePath("/dashboard/applications");
-  revalidatePath("/dashboard");
+  revalidateTag(CACHE_TAGS.APPLICATIONS, cacheProfile)
+  revalidatePath("/applications")
+  revalidatePath("/")
 }
 
 export function revalidateApplication(id: string) {
-  revalidateTag(`${CACHE_TAGS.APPLICATION}-${id}`);
-  revalidateApplicationActivity(id);
-  revalidateApplications();
+  revalidateTag(`${CACHE_TAGS.APPLICATION}-${id}`, cacheProfile)
+  revalidateApplicationActivity(id)
+  revalidateApplications()
 }
 
 export function revalidateApplicationActivity(id: string) {
-  revalidateTag(`${CACHE_TAGS.ACTIVITY}-${id}`);
+  revalidateTag(`${CACHE_TAGS.ACTIVITY}-${id}`, cacheProfile)
 }
 
 export function revalidateStats() {
-  revalidateTag(CACHE_TAGS.STATS);
-  revalidatePath("/dashboard");
+  revalidateTag(CACHE_TAGS.STATS, cacheProfile)
+  revalidatePath("/")
 }
 
 export function revalidateUser() {
-  revalidateTag(CACHE_TAGS.USER);
-  revalidatePath("/dashboard");
+  revalidateTag(CACHE_TAGS.USER, cacheProfile)
+  revalidatePath("/")
 }
 
 export function revalidateAll() {
-  revalidateApplications();
-  revalidateStats();
-  revalidateUser();
+  revalidateApplications()
+  revalidateStats()
+  revalidateUser()
 }

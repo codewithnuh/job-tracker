@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useActionState } from "react"
 import { useRouter } from "next/navigation"
-import { useFormState } from "react-dom"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Loading01Icon } from "@hugeicons/core-free-icons"
@@ -44,7 +43,7 @@ const allStatuses: ApplicationStatus[] = [
 
 export default function AddApplicationPage() {
   const router = useRouter()
-  const [state, formAction, isPending] = useFormState(createApplicationAction, {
+  const [state, formAction, isPending] = useActionState(createApplicationAction, {
     success: false,
     message: "",
   })

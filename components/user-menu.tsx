@@ -32,9 +32,7 @@ export function UserMenu({ user }: { user: User }) {
 
   const handleLogout = async () => {
     await logoutAction()
-    document.cookie = "token=; path=/; max-age=0"
-    document.cookie = "refreshToken=; path=/; max-age=0"
-    router.push("/login")
+    router.replace("/login")
   }
 
   return (

@@ -1,9 +1,8 @@
-"use client"
+ "use client"
 
-import { useEffect } from "react"
+import { useEffect, useActionState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useFormState } from "react-dom"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { BriefcaseIcon, Loading01Icon } from "@hugeicons/core-free-icons"
@@ -15,7 +14,7 @@ import { registerAction } from "@/lib/api/actions/auth"
 
 export default function RegisterPage() {
   const router = useRouter()
-  const [state, formAction, isPending] = useFormState(registerAction, {
+  const [state, formAction, isPending] = useActionState(registerAction, {
     success: false,
     message: "",
   })

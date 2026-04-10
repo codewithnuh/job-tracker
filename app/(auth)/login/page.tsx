@@ -26,17 +26,15 @@ export default function LoginPage() {
   })
 
   useEffect(() => {
-    if (!isPending && state.message && !state.success) {
-      toast.error(state.message)
+    if (state.success) {
+      router.replace("/")
+      return
     }
 
-    if (state.success && state.cookies) {
-      Object.entries(state.cookies).forEach(([name, value]) => {
-        document.cookie = `${name}=${value}; path=/; max-age=604800`
-      })
-      router.push("/")
+    if (!isPending && state.message) {
+      toast.error(state.message)
     }
-  }, [state, isPending, router])
+  }, [state.success, state.message, isPending, router])
 
   return (
     <Card>

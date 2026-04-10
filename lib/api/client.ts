@@ -1,26 +1,12 @@
+"use server"
+
 import { headers } from "next/headers"
 import type { ErrorResponse, SuccessResponse } from "@/lib/types/api"
+import { ApiError } from "./utils"
+import { applySetCookieHeaders } from "./cookies"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3001"
-
-export class ApiError extends Error {
-  status_code: number
-  code: string
-  details: string | Array<{ field: string; message: string }>
-
-  constructor(
-    message: string,
-    status_code: number,
-    code: string,
-    details: string | Array<{ field: string; message: string }>
-  ) {
-    super(message)
-    this.name = "ApiError"
-    this.status_code = status_code
-    this.code = code
-    this.details = details
-  }
-}
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://job-tracker-api-8yjw.onrender.com"
 
 async function getRequestCookies(): Promise<string | null> {
   const requestHeaders = await headers()
@@ -40,12 +26,7 @@ async function refreshTokens(): Promise<boolean> {
     })
 
     if (response.ok) {
-      const setCookieHeader = response.headers.getSetCookie()
-      setCookieHeader.forEach((cookieString) => {
-        const [nameValue] = cookieString.split(";")
-        const [name, value] = nameValue.split("=")
-        document.cookie = `${name.trim()}=${value.trim()}; path=/; max-age=604800`
-      })
+      await applySetCookieHeaders(response.headers.getSetCookie())
       return true
     }
   } catch {
@@ -105,7 +86,8 @@ export async function apiFetch<T>(
       })
 
       if (retryResponse.ok) {
-        return retryResponse.json() as SuccessResponse<T>
+        const retryData = await retryResponse.json()
+        return retryData as SuccessResponse<T>
       }
     }
   }
@@ -123,19 +105,4 @@ export async function apiFetch<T>(
   }
 
   return data as SuccessResponse<T>
-}
-
-export function buildQueryString(
-  params: Record<string, string | number | undefined | null>
-): string {
-  const searchParams = new URLSearchParams()
-
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== null && value !== "") {
-      searchParams.append(key, String(value))
-    }
-  }
-
-  const query = searchParams.toString()
-  return query ? `?${query}` : ""
 }

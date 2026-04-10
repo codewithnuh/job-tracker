@@ -1,11 +1,42 @@
-"use server"
+ "use server"
 
 import { apiFetch } from "@/lib/api/client"
 import { revalidateUser } from "@/lib/api/revalidate"
+import { applySetCookieHeaders, clearAuthCookies } from "@/lib/api/cookies"
 import type { RegisterInput, User, MeResponse } from "@/lib/types/api"
-import { cookies } from "next/headers"
-import { parse } from "set-cookie-parser"
-const API_BASE_URL = "http://localhost:3001"
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+
+export async function loginAction(_: unknown, formData: FormData) {
+  try {
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
+
+    const response = await fetch(`${API_BASE_URL}/v1/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+      cache: "no-store",
+      credentials: "include",
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null)
+      return {
+        success: false,
+        message: errorData?.message || "Invalid credentials",
+      }
+    }
+
+    await applySetCookieHeaders(response.headers.getSetCookie())
+    revalidateUser()
+
+    return { success: true, message: "Login successful" }
+  } catch (error) {
+    console.error("Login Error:", error)
+    return { success: false, message: "Something went wrong" }
+  }
+}
 
 export async function registerAction(
   _: unknown,
@@ -20,10 +51,7 @@ export async function registerAction(
     const password = formData.get("password") as string
 
     if (!name || !email || !password) {
-      return {
-        success: false,
-        message: "All fields are required",
-      }
+      return { success: false, message: "All fields are required" }
     }
 
     const input: RegisterInput = { name, email, password }
@@ -38,76 +66,35 @@ export async function registerAction(
       success: true,
       message: "Registration successful. Please login.",
     }
-  } catch (error) {
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-      }
-    }
+  } catch (error: any) {
     return {
       success: false,
-      message: "An unexpected error occurred",
+      message: error.message || "An unexpected error occurred",
     }
-  }
-}
-
-export async function loginAction(_: unknown, formData: FormData) {
-  try {
-    const email = formData.get("email") as string
-    const password = formData.get("password") as string
-
-    const response = await fetch(`${API_BASE_URL}/v1/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-      cache: "no-store",
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null)
-      return {
-        success: false,
-        message: errorData?.message || "Invalid credentials",
-      }
-    }
-    const cookieStore = await cookies()
-    const setCookieHeader = response.headers.getSetCookie()
-    const parsedCookies = parse(setCookieHeader)
-    for (const cookie of parsedCookies) {
-      await cookieStore.set({
-        name: cookie.name,
-        value: cookie.value,
-        path: cookie.path || "/",
-
-        sameSite: (cookie.sameSite as any) || "strict",
-        expires: cookie.maxAge,
-      })
-    }
-    const cookiesData: Record<string, string> = {}
-
-    setCookieHeader.forEach((cookieString) => {
-      const [nameValue] = cookieString.split(";")
-      const [name, value] = nameValue.split("=")
-      cookiesData[name.trim()] = value.trim()
-    })
-
-    revalidateUser()
-
-    return {
-      success: true,
-      message: "Login successful",
-      cookies: cookiesData,
-    }
-  } catch (error) {
-    console.error(error)
-    return { success: false, message: "Something went wrong" }
   }
 }
 
 export async function logoutAction() {
-  revalidateUser()
-  return { success: true }
+  try {
+    const response = await fetch(`${API_BASE_URL}/v1/auth/logout`, {
+      method: "POST",
+      cache: "no-store",
+      credentials: "include",
+    })
+
+    if (response.ok) {
+      await applySetCookieHeaders(response.headers.getSetCookie())
+    } else {
+      await clearAuthCookies()
+    }
+  } catch (error) {
+    console.error("Logout Error:", error)
+    await clearAuthCookies()
+  } finally {
+    revalidateUser()
+  }
+
+  return { success: true, message: "Logged out" }
 }
 
 export async function getCurrentUser(): Promise<User | null> {
@@ -120,7 +107,7 @@ export async function getCurrentUser(): Promise<User | null> {
     })
 
     return response.data?.user || null
-  } catch {
+  } catch (error) {
     return null
   }
 }

@@ -8,7 +8,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   PlusSignIcon,
   Search01Icon,
-  Delete01Icon,
   Loading01Icon,
   Trash2,
 } from "@hugeicons/core-free-icons"
@@ -32,7 +31,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { deleteApplicationAction } from "@/lib/api/actions/applications"
-import type { Application, ApplicationStatus } from "@/lib/types"
+import { useApplications } from "@/lib/swr/hooks"
+import type { ApplicationStatus, ListApplicationsFilters } from "@/lib/types"
 
 const statusColors: Record<ApplicationStatus, string> = {
   APPLIED: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
@@ -55,41 +55,42 @@ const allStatuses: ApplicationStatus[] = [
 ]
 
 interface ApplicationsPageClientProps {
-  applications: Application[]
-  totalPages: number
-  currentPage: number
-  totalItems: number
+  initialFilters: ListApplicationsFilters
 }
 
 export default function ApplicationsPageClient({
-  applications: initialApps,
-  totalPages,
-  currentPage,
-  totalItems,
+  initialFilters,
 }: ApplicationsPageClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const statusFilter = searchParams.get("status") || ""
-  const companyFilter = searchParams.get("company") || ""
-  const locationFilter = searchParams.get("location") || ""
+  const [filters, setFilters] = useState<ListApplicationsFilters>({
+    ...initialFilters,
+  })
 
-  function handleFilterChange(key: string, value: string) {
-    const params = new URLSearchParams(searchParams)
-    if (value) {
-      params.set(key, value)
-    } else {
-      params.delete(key)
-    }
-    params.set("page", "1")
-    router.push(`/applications?${params.toString()}`)
+  const { applications, meta, isLoading, mutate } = useApplications(filters)
+
+  const totalPages = meta?.totalPages || 1
+  const currentPage = meta?.currentPage || 1
+  const totalItems = meta?.totalItems || 0
+
+  function handleFilterChange(
+    key: keyof ListApplicationsFilters,
+    value: string
+  ) {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value || undefined,
+      page: 1,
+    }))
   }
 
   function handlePageChange(page: number) {
-    const params = new URLSearchParams(searchParams)
-    params.set("page", page.toString())
-    router.push(`/applications?${params.toString()}`)
+    setFilters((prev) => ({
+      ...prev,
+      page,
+    }))
   }
 
   async function handleDelete(id: string) {
@@ -101,7 +102,7 @@ export default function ApplicationsPageClient({
 
     if (result.success) {
       toast.success(result.message)
-      router.refresh()
+      mutate()
     } else {
       toast.error(result.message)
     }
@@ -140,28 +141,22 @@ export default function ApplicationsPageClient({
                 <Input
                   placeholder="Search company..."
                   className="pl-9"
-                  defaultValue={companyFilter}
-                  onBlur={(e) => handleFilterChange("company", e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleFilterChange(
-                        "company",
-                        (e.target as HTMLInputElement).value
-                      )
-                    }
-                  }}
+                  value={filters.companyName || ""}
+                  onChange={(e) =>
+                    handleFilterChange("companyName", e.target.value)
+                  }
                 />
               </div>
             </div>
             <Select
-              value={statusFilter}
+              value={filters.status || ""}
               onValueChange={(v: string) => handleFilterChange("status", v)}
             >
               <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="All statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="STATUS">All statuses</SelectItem>
+                <SelectItem value="Status">All statuses</SelectItem>
                 {allStatuses.map((s) => (
                   <SelectItem key={s} value={s}>
                     {s.charAt(0) + s.slice(1).toLowerCase()}
@@ -172,16 +167,8 @@ export default function ApplicationsPageClient({
             <Input
               placeholder="Location..."
               className="sm:w-48"
-              defaultValue={locationFilter}
-              onBlur={(e) => handleFilterChange("location", e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleFilterChange(
-                    "location",
-                    (e.target as HTMLInputElement).value
-                  )
-                }
-              }}
+              value={filters.location || ""}
+              onChange={(e) => handleFilterChange("location", e.target.value)}
             />
           </div>
         </CardContent>
@@ -189,7 +176,15 @@ export default function ApplicationsPageClient({
 
       <Card>
         <CardContent className="p-0">
-          {initialApps.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <HugeiconsIcon
+                icon={Loading01Icon}
+                strokeWidth={2}
+                className="animate-spin text-muted-foreground"
+              />
+            </div>
+          ) : applications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <p className="text-sm text-muted-foreground">
                 No applications found.
@@ -208,7 +203,7 @@ export default function ApplicationsPageClient({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {initialApps.map((app) => (
+                {applications.map((app) => (
                   <TableRow key={app.id}>
                     <TableCell className="font-medium">
                       <Link

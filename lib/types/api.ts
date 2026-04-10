@@ -76,11 +76,6 @@ export interface MeResponse {
   user: User;
 }
 
-export interface ApplicationsListResponse {
-  data: Application[];
-  meta: PaginationMeta;
-}
-
 export interface StatsResponse {
   totalApplications: number;
   byStatus: Record<ApplicationStatus, number>;

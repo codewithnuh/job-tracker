@@ -4,6 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Toaster } from "@/components/ui/sonner"
+import { SWRProvider } from "@/lib/swr"
 
 const interSans = Inter({
   subsets: ["latin"],
@@ -23,7 +24,9 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <TooltipProvider>{children}</TooltipProvider>
+          <TooltipProvider>
+            <SWRProvider>{children}</SWRProvider>
+          </TooltipProvider>
           <Toaster />
         </ThemeProvider>
       </body>
