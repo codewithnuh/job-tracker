@@ -19,17 +19,17 @@ import { Separator } from "@/components/ui/separator"
 const navItems = [
   {
     title: "Dashboard",
-    href: "/dashboard",
+    href: "/",
     icon: Home01Icon,
   },
   {
     title: "Applications",
-    href: "/dashboard/applications",
+    href: "/applications",
     icon: BriefcaseIcon,
   },
   {
     title: "Stats",
-    href: "/dashboard/stats",
+    href: "/stats",
     icon: ChartPieIcon,
   },
 ]
@@ -52,7 +52,7 @@ function NavLinks({
       {navItems.map((item) => {
         const isActive =
           pathname === item.href ||
-          (item.href !== "/dashboard" && pathname.startsWith(item.href))
+          (item.href !== "/" && pathname.startsWith(item.href))
         return (
           <Link
             key={item.href}
@@ -83,7 +83,7 @@ export function DashboardNav({ className }: DashboardNavProps) {
       )}
     >
       <div className="flex h-14 items-center border-b px-6">
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <HugeiconsIcon icon={BriefcaseIcon} strokeWidth={2} />
           <span className="text-base font-semibold">Job Tracker</span>
         </Link>
@@ -109,7 +109,7 @@ export function MobileNav() {
       <SheetContent side="left" className="w-64 p-0">
         <div className="flex h-14 items-center border-b px-6">
           <Link
-            href="/dashboard"
+            href="/"
             onClick={() => setOpen(false)}
             className="flex items-center gap-2"
           >

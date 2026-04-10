@@ -18,7 +18,13 @@ import {
 } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import {
   Select,
   SelectContent,
@@ -95,7 +101,11 @@ function StatusUpdateForm({
       <Button type="submit" size="sm" disabled={isPending}>
         {isPending ? (
           <>
-            <HugeiconsIcon icon={Loading01Icon} strokeWidth={2} className="animate-spin" />
+            <HugeiconsIcon
+              icon={Loading01Icon}
+              strokeWidth={2}
+              className="animate-spin"
+            />
             Updating...
           </>
         ) : (
@@ -120,7 +130,7 @@ export default function ApplicationDetailPage({
       const result = await deleteApplicationAction(application.id)
       if (result.success) {
         toast.success(result.message)
-        router.push("/dashboard/applications")
+        router.push("/applications")
       } else {
         toast.error(result.message)
       }
@@ -132,13 +142,17 @@ export default function ApplicationDetailPage({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" asChild>
-            <Link href="/dashboard/applications">
+            <Link href="/applications">
               <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-semibold">{application.companyName}</h1>
-            <p className="text-sm text-muted-foreground">{application.roleTitle}</p>
+            <h1 className="text-2xl font-semibold">
+              {application.companyName}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {application.roleTitle}
+            </p>
           </div>
         </div>
         <Button
@@ -149,7 +163,11 @@ export default function ApplicationDetailPage({
         >
           {isDeleting ? (
             <>
-              <HugeiconsIcon icon={Loading01Icon} strokeWidth={2} className="animate-spin" />
+              <HugeiconsIcon
+                icon={Loading01Icon}
+                strokeWidth={2}
+                className="animate-spin"
+              />
               Deleting...
             </>
           ) : (
@@ -170,7 +188,11 @@ export default function ApplicationDetailPage({
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="flex items-center gap-3">
-                  <HugeiconsIcon icon={Calendar01Icon} strokeWidth={2} className="text-muted-foreground" />
+                  <HugeiconsIcon
+                    icon={Calendar01Icon}
+                    strokeWidth={2}
+                    className="text-muted-foreground"
+                  />
                   <div>
                     <p className="text-xs text-muted-foreground">Applied</p>
                     <p className="text-sm font-medium">
@@ -179,7 +201,11 @@ export default function ApplicationDetailPage({
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <HugeiconsIcon icon={MapPin01Icon} strokeWidth={2} className="text-muted-foreground" />
+                  <HugeiconsIcon
+                    icon={MapPin01Icon}
+                    strokeWidth={2}
+                    className="text-muted-foreground"
+                  />
                   <div>
                     <p className="text-xs text-muted-foreground">Location</p>
                     <p className="text-sm font-medium">
@@ -189,7 +215,11 @@ export default function ApplicationDetailPage({
                 </div>
                 {application.jobUrl && (
                   <div className="flex items-center gap-3">
-                    <HugeiconsIcon icon={Link02Icon} strokeWidth={2} className="text-muted-foreground" />
+                    <HugeiconsIcon
+                      icon={Link02Icon}
+                      strokeWidth={2}
+                      className="text-muted-foreground"
+                    />
                     <div>
                       <p className="text-xs text-muted-foreground">Job URL</p>
                       <a
@@ -205,9 +235,15 @@ export default function ApplicationDetailPage({
                 )}
                 {(application.salaryMin || application.salaryMax) && (
                   <div className="flex items-center gap-3">
-                    <HugeiconsIcon icon={Money01Icon} strokeWidth={2} className="text-muted-foreground" />
+                    <HugeiconsIcon
+                      icon={Money01Icon}
+                      strokeWidth={2}
+                      className="text-muted-foreground"
+                    />
                     <div>
-                      <p className="text-xs text-muted-foreground">Salary Range</p>
+                      <p className="text-xs text-muted-foreground">
+                        Salary Range
+                      </p>
                       <p className="text-sm font-medium">
                         {application.salaryMin
                           ? `$${application.salaryMin.toLocaleString()}`
@@ -225,10 +261,14 @@ export default function ApplicationDetailPage({
                 <>
                   <Separator className="my-4" />
                   <div className="flex items-start gap-3">
-                    <HugeiconsIcon icon={NoteIcon} strokeWidth={2} className="mt-0.5 text-muted-foreground" />
+                    <HugeiconsIcon
+                      icon={NoteIcon}
+                      strokeWidth={2}
+                      className="mt-0.5 text-muted-foreground"
+                    />
                     <div>
                       <p className="text-xs text-muted-foreground">Notes</p>
-                      <p className="mt-1 whitespace-pre-wrap text-sm">
+                      <p className="mt-1 text-sm whitespace-pre-wrap">
                         {application.notes}
                       </p>
                     </div>
@@ -269,7 +309,7 @@ export default function ApplicationDetailPage({
         </CardHeader>
         <CardContent>
           {activityLog.length === 0 ? (
-            <p className="text-center text-sm text-muted-foreground py-4">
+            <p className="py-4 text-center text-sm text-muted-foreground">
               No activity recorded yet.
             </p>
           ) : (

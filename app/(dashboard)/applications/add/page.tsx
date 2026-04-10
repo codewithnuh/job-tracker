@@ -7,7 +7,13 @@ import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Loading01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -17,7 +23,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { FieldGroup, Field, FieldLabel, FieldDescription } from "@/components/ui/field"
+import {
+  FieldGroup,
+  Field,
+  FieldLabel,
+  FieldDescription,
+} from "@/components/ui/field"
 import { createApplicationAction } from "@/lib/api/actions/applications"
 import type { ApplicationStatus } from "@/lib/types"
 
@@ -41,7 +52,7 @@ export default function AddApplicationPage() {
   useEffect(() => {
     if (state.success) {
       toast.success(state.message)
-      router.push("/dashboard/applications")
+      router.push("/applications")
     } else if (!isPending && state.message && !state.success) {
       toast.error(state.message)
     }
@@ -160,10 +171,18 @@ export default function AddApplicationPage() {
                 />
               </Field>
 
-              <Button type="submit" className="w-full sm:w-auto" disabled={isPending}>
+              <Button
+                type="submit"
+                className="w-full sm:w-auto"
+                disabled={isPending}
+              >
                 {isPending ? (
                   <>
-                    <HugeiconsIcon icon={Loading01Icon} strokeWidth={2} className="animate-spin" />
+                    <HugeiconsIcon
+                      icon={Loading01Icon}
+                      strokeWidth={2}
+                      className="animate-spin"
+                    />
                     Saving...
                   </>
                 ) : (

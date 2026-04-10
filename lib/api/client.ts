@@ -1,4 +1,4 @@
-import { cookies } from "next/headers"
+import { headers } from "next/headers"
 import type { ErrorResponse, SuccessResponse } from "@/lib/types/api"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3001"
@@ -22,14 +22,36 @@ export class ApiError extends Error {
   }
 }
 
-async function getAuthToken(): Promise<string | null> {
-  const cookieStore = await cookies()
-  return cookieStore.get("token")?.value || null
+async function getRequestCookies(): Promise<string | null> {
+  const requestHeaders = await headers()
+  return requestHeaders.get("cookie")
 }
 
 interface FetchOptions extends RequestInit {
   revalidate?: number | false
   tags?: string[]
+}
+
+async function refreshTokens(): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/v1/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+    })
+
+    if (response.ok) {
+      const setCookieHeader = response.headers.getSetCookie()
+      setCookieHeader.forEach((cookieString) => {
+        const [nameValue] = cookieString.split(";")
+        const [name, value] = nameValue.split("=")
+        document.cookie = `${name.trim()}=${value.trim()}; path=/; max-age=604800`
+      })
+      return true
+    }
+  } catch {
+    // Refresh failed
+  }
+  return false
 }
 
 export async function apiFetch<T>(
@@ -43,21 +65,15 @@ export async function apiFetch<T>(
     ...restOptions
   } = options
 
-  const token = await getAuthToken()
-  const cookieStore = await cookies()
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ")
+  const cookieHeader = await getRequestCookies()
 
-  const headers: HeadersInit = {
+  const headersObj: HeadersInit = {
     "Content-Type": "application/json",
-    Cookie: cookieHeader, // Send cookies to Fastify
     ...(customHeaders as Record<string, string>),
   }
 
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`
+  if (cookieHeader) {
+    headersObj["Cookie"] = cookieHeader
   }
 
   const url = `${API_BASE_URL}${path}`
@@ -72,9 +88,27 @@ export async function apiFetch<T>(
 
   const response = await fetch(url, {
     ...restOptions,
-    headers,
+    headers: headersObj,
     next: Object.keys(nextOptions).length > 0 ? nextOptions : undefined,
   })
+
+  if (response.status === 401) {
+    const refreshed = await refreshTokens()
+    if (refreshed) {
+      const newCookieHeader = await getRequestCookies()
+      if (newCookieHeader) {
+        headersObj["Cookie"] = newCookieHeader
+      }
+      const retryResponse = await fetch(url, {
+        ...restOptions,
+        headers: headersObj,
+      })
+
+      if (retryResponse.ok) {
+        return retryResponse.json() as SuccessResponse<T>
+      }
+    }
+  }
 
   const data = await response.json()
 
