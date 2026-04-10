@@ -1,11 +1,10 @@
- "use server"
+"use server"
 
 import { apiFetch } from "@/lib/api/client"
 import { revalidateUser } from "@/lib/api/revalidate"
 import { applySetCookieHeaders, clearAuthCookies } from "@/lib/api/cookies"
 import type { RegisterInput, User, MeResponse } from "@/lib/types/api"
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
+import { API_BASE_URL } from "@/lib/config/api"
 
 export async function loginAction(_: unknown, formData: FormData) {
   try {

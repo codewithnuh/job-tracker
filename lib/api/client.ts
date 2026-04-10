@@ -4,9 +4,7 @@ import { headers } from "next/headers"
 import type { ErrorResponse, SuccessResponse } from "@/lib/types/api"
 import { ApiError } from "./utils"
 import { applySetCookieHeaders } from "./cookies"
-
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://job-tracker-api-8yjw.onrender.com"
+import { API_BASE_URL } from "@/lib/config/api"
 
 async function getRequestCookies(): Promise<string | null> {
   const requestHeaders = await headers()

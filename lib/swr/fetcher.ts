@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3001"
+import { API_BASE_URL } from "@/lib/config/api"
 
 function buildFetchUrl(url: string) {
   if (typeof window === "undefined") {
