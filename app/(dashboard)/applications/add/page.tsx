@@ -43,10 +43,13 @@ const allStatuses: ApplicationStatus[] = [
 
 export default function AddApplicationPage() {
   const router = useRouter()
-  const [state, formAction, isPending] = useActionState(createApplicationAction, {
-    success: false,
-    message: "",
-  })
+  const [state, formAction, isPending] = useActionState(
+    createApplicationAction,
+    {
+      success: false,
+      message: "",
+    }
+  )
 
   useEffect(() => {
     if (state.success) {

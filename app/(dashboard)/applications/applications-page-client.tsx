@@ -82,8 +82,6 @@ export default function ApplicationsPageClient({
   })
   const { applications, meta, isLoading, mutate } = useApplications(filters)
 
-  const totalPages = meta?.totalPages || 1
-  const currentPage = meta?.currentPage || 1
   const totalItems = applications.length || 0
 
   function handleFilterChange(
@@ -93,10 +91,6 @@ export default function ApplicationsPageClient({
     setFilters((prev) => ({ ...prev, [key]: value || undefined, page: 1 }))
   }
 
-  function handlePageChange(page: number) {
-    setFilters((prev) => ({ ...prev, page }))
-  }
-
   function initiateDelete(id: string) {
     setIdToDelete(id)
     setIsDialogOpen(true)
@@ -104,9 +98,7 @@ export default function ApplicationsPageClient({
 
   async function confirmDelete() {
     if (!idToDelete) return
-
     const id = idToDelete
-    console.log(id)
     setDeletingId(id)
     setIsDialogOpen(false)
 
@@ -123,10 +115,9 @@ export default function ApplicationsPageClient({
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Standard Dialog for Deletion */}
+    <div className="flex flex-col gap-6 p-4 md:p-0">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-[95vw] max-w-md rounded-lg">
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
@@ -134,27 +125,39 @@ export default function ApplicationsPageClient({
               cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="mt-4 flex gap-2 sm:justify-end">
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+          <DialogFooter className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setIsDialogOpen(false)}
+              className="w-full sm:w-auto"
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={confirmDelete}>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              className="w-full sm:w-auto"
+            >
               Delete Application
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Applications</h1>
           <p className="text-sm text-muted-foreground">
             {totalItems} application{totalItems !== 1 ? "s" : ""} total
           </p>
         </div>
-        <Button asChild>
+        <Button asChild className="w-full sm:w-auto">
           <Link href="/applications/add">
-            <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
+            <HugeiconsIcon
+              icon={PlusSignIcon}
+              strokeWidth={2}
+              className="mr-2 size-4"
+            />
             Add Application
           </Link>
         </Button>
@@ -165,7 +168,7 @@ export default function ApplicationsPageClient({
           <CardTitle className="text-base font-medium">Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="grid grid-cols-1 gap-4 md:flex md:flex-row">
             <div className="relative flex-1">
               <HugeiconsIcon
                 icon={Search01Icon}
@@ -174,154 +177,160 @@ export default function ApplicationsPageClient({
               />
               <Input
                 placeholder="Search company..."
-                className="pl-9"
+                className="w-full pl-9"
                 value={filters.companyName || ""}
                 onChange={(e) =>
                   handleFilterChange("companyName", e.target.value)
                 }
               />
             </div>
-            <Select
-              value={filters.status || ""}
-              onValueChange={(v: string) => handleFilterChange("status", v)}
-            >
-              <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="All statuses" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Status">All statuses</SelectItem>
-                {allStatuses.map((s) => (
-                  <SelectItem key={s} value={s}>
-                    {s.charAt(0) + s.slice(1).toLowerCase()}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Input
-              placeholder="Location..."
-              className="sm:w-48"
-              value={filters.location || ""}
-              onChange={(e) => handleFilterChange("location", e.target.value)}
-            />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:flex md:flex-row">
+              <Select
+                value={filters.status || ""}
+                onValueChange={(v: string) => handleFilterChange("status", v)}
+              >
+                <SelectTrigger className="w-full md:w-48">
+                  <SelectValue placeholder="All statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Status">All statuses</SelectItem>
+                  {allStatuses.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s.charAt(0) + s.slice(1).toLowerCase()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                placeholder="Location..."
+                className="w-full md:w-48"
+                value={filters.location || ""}
+                onChange={(e) => handleFilterChange("location", e.target.value)}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardContent className="p-0">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <HugeiconsIcon
-                icon={Loading01Icon}
-                strokeWidth={2}
-                className="animate-spin text-muted-foreground"
-              />
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Applied</TableHead>
-                  <TableHead className="w-24">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {applications.map((app) => (
-                  <TableRow key={app.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/applications/${app.id}`}
-                          className="font-medium hover:underline"
-                        >
-                          {app.companyName}
-                        </Link>
-                        {app.jobUrl && (
-                          <a
-                            href={app.jobUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-primary"
-                          >
-                            <HugeiconsIcon
-                              icon={ExternalLink}
-                              strokeWidth={2}
-                              className="size-4"
-                            />
-                          </a>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {app.roleTitle}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {app.location || "—"}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={statusColors[app.status]}
-                      >
-                        {app.status.charAt(0) +
-                          app.status.slice(1).toLowerCase()}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(app.appliedAt).toLocaleDateString(undefined, {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="size-8"
-                          asChild
-                        >
-                          <Link href={`/applications/${app.id}`}>
-                            <HugeiconsIcon
-                              icon={Edit01Icon}
-                              strokeWidth={2}
-                              className="size-4"
-                            />
-                          </Link>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="size-8 text-muted-foreground hover:text-destructive"
-                          disabled={deletingId === app.id}
-                          onClick={() => initiateDelete(app.id)}
-                        >
-                          {deletingId === app.id ? (
-                            <HugeiconsIcon
-                              icon={Loading01Icon}
-                              strokeWidth={2}
-                              className="size-4 animate-spin"
-                            />
-                          ) : (
-                            <HugeiconsIcon
-                              icon={Trash2}
-                              strokeWidth={2}
-                              className="size-4"
-                            />
-                          )}
-                        </Button>
-                      </div>
-                    </TableCell>
+          <div className="overflow-x-auto">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <HugeiconsIcon
+                  icon={Loading01Icon}
+                  strokeWidth={2}
+                  className="animate-spin text-muted-foreground"
+                />
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="whitespace-nowrap">Company</TableHead>
+                    <TableHead className="whitespace-nowrap">Role</TableHead>
+                    <TableHead className="whitespace-nowrap">
+                      Location
+                    </TableHead>
+                    <TableHead className="whitespace-nowrap">Status</TableHead>
+                    <TableHead className="whitespace-nowrap">Applied</TableHead>
+                    <TableHead className="w-24 text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+                </TableHeader>
+                <TableBody>
+                  {applications.map((app) => (
+                    <TableRow key={app.id}>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href={`/applications/${app.id}`}
+                            className="hover:underline"
+                          >
+                            {app.companyName}
+                          </Link>
+                          {app.jobUrl && (
+                            <a
+                              href={app.jobUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-muted-foreground hover:text-primary"
+                            >
+                              <HugeiconsIcon
+                                icon={ExternalLink}
+                                strokeWidth={2}
+                                className="size-4"
+                              />
+                            </a>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-muted-foreground">
+                        {app.roleTitle}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-muted-foreground">
+                        {app.location || "—"}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className={`${statusColors[app.status]} whitespace-nowrap`}
+                        >
+                          {app.status.charAt(0) +
+                            app.status.slice(1).toLowerCase()}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm whitespace-nowrap text-muted-foreground">
+                        {new Date(app.appliedAt).toLocaleDateString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                            asChild
+                          >
+                            <Link href={`/applications/${app.id}`}>
+                              <HugeiconsIcon
+                                icon={Edit01Icon}
+                                strokeWidth={2}
+                                className="size-4"
+                              />
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8 text-muted-foreground hover:text-destructive"
+                            disabled={deletingId === app.id}
+                            onClick={() => initiateDelete(app.id)}
+                          >
+                            {deletingId === app.id ? (
+                              <HugeiconsIcon
+                                icon={Loading01Icon}
+                                strokeWidth={2}
+                                className="size-4 animate-spin"
+                              />
+                            ) : (
+                              <HugeiconsIcon
+                                icon={Trash2}
+                                strokeWidth={2}
+                                className="size-4"
+                              />
+                            )}
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>

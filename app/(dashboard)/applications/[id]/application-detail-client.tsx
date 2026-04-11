@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useTransition, useActionState } from "react"
+import { useState, useTransition } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -30,7 +30,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
+import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -92,38 +92,27 @@ function StatusUpdateForm({
   onSuccess?: () => void
   compact?: boolean
 }) {
-  const [state, formAction, isPending] = useActionState(
-    async (prev: { success: boolean; message: string }, formData: FormData) => {
-      const result = await updateStatusDirectAction(
-        formData.get("id") as string,
-        formData.get("status") as ApplicationStatus
-      )
-      return result
-    },
-    { success: false, message: "" }
-  )
-  const { success, message } = state
   const [selectedStatus, setSelectedStatus] =
     useState<ApplicationStatus>(currentStatus)
   const [note, setNote] = useState("")
 
-  useEffect(() => {
-    if (!message || isPending) return
-    if (success) {
-      toast.success(message)
-      onSuccess?.()
-      setNote("")
-    } else {
-      toast.error(message)
-    }
-  }, [success, message, isPending, onSuccess])
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = e.currentTarget
     const formData = new FormData(form)
     formData.set("id", applicationId)
-    formAction(formData)
+
+    const status = formData.get("status") as ApplicationStatus
+
+    const result = await updateStatusDirectAction(applicationId, status)
+
+    if (result.success) {
+      toast.success(result.message)
+      setNote("")
+      onSuccess?.()
+    } else {
+      toast.error(result.message)
+    }
   }
 
   return (
@@ -153,17 +142,9 @@ function StatusUpdateForm({
         <Button
           type="submit"
           size={compact ? "sm" : "default"}
-          disabled={isPending || selectedStatus === currentStatus}
+          disabled={selectedStatus === currentStatus}
         >
-          {isPending ? (
-            <HugeiconsIcon
-              icon={Loading01Icon}
-              strokeWidth={2}
-              className="animate-spin"
-            />
-          ) : (
-            "Update"
-          )}
+          Update
         </Button>
       </div>
       <Textarea
@@ -186,25 +167,23 @@ function EditApplicationDialog({
   onSuccess: () => void
 }) {
   const [open, setOpen] = useState(false)
-  const [state, formAction, isPending] = useActionState(
-    updateApplicationAction,
-    {
-      success: false,
-      message: "",
-    }
-  )
-  const { success, message } = state
+  const [isPending, setIsPending] = useState(false)
 
-  useEffect(() => {
-    if (!message || isPending) return
-    if (success) {
-      toast.success(message)
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsPending(true)
+    const formData = new FormData(e.currentTarget)
+    const result = await updateApplicationAction(null, formData)
+    setIsPending(false)
+
+    if (result.success) {
+      toast.success(result.message)
       onSuccess()
       setOpen(false)
     } else {
-      toast.error(message)
+      toast.error(result.message)
     }
-  }, [success, message, isPending, onSuccess])
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -221,7 +200,7 @@ function EditApplicationDialog({
             Update the details for {application.companyName}
           </DialogDescription>
         </DialogHeader>
-        <form action={formAction} className="grid gap-4 py-4">
+        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
           <input type="hidden" name="id" value={application.id} />
           <div className="grid gap-4 sm:grid-cols-2">
             <Field>
@@ -556,31 +535,31 @@ export default function ApplicationDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" asChild className="shrink-0">
             <Link href="/applications">
               <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
             </Link>
           </Button>
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="truncate text-2xl font-semibold">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="truncate text-xl font-semibold sm:text-2xl">
                 {application.companyName}
               </h1>
               <Badge
                 variant="outline"
-                className={statusColors[application.status]}
+                className={`shrink-0 ${statusColors[application.status]}`}
               >
                 {formatStatusLabel(application.status)}
               </Badge>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="truncate text-sm text-muted-foreground">
               {application.roleTitle}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 pl-14 sm:pl-0">
+        <div className="flex items-center gap-2 pl-11 sm:pl-0">
           <EditApplicationDialog application={application} onSuccess={mutate} />
           <DeleteDialog
             applicationId={application.id}
@@ -590,7 +569,7 @@ export default function ApplicationDetailPage({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-5">
-        <div className="space-y-6 lg:col-span-3">
+        <div className="order-2 space-y-6 lg:order-1 lg:col-span-3">
           <Card>
             <CardContent className="p-6">
               <h2 className="mb-4 text-sm font-medium text-muted-foreground">

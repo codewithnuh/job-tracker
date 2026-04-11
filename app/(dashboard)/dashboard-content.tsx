@@ -76,8 +76,6 @@ export function DashboardContent() {
     limit: 5,
   })
 
-  const isLoading = userLoading || statsLoading || appsLoading
-
   useEffect(() => {
     if (logoutState.success) {
       router.replace("/login")
@@ -90,18 +88,17 @@ export function DashboardContent() {
   }, [logoutState, isLogoutPending, router])
   console.log(user)
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">
+          <h1 className="text-xl font-semibold sm:text-2xl">
             Welcome back, {user?.name?.split(" ")[0] || "User"}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            You have full access to view and update every application in your
-            pipeline.
+          <p className="hidden text-sm text-muted-foreground sm:block">
+            Track and manage your job applications
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-2">
           <form action={logoutFormAction}>
             <Button
               variant="outline"
@@ -121,7 +118,7 @@ export function DashboardContent() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
         <StatCard
           title="Total Applications"
           value={stats.totalApplications}
@@ -148,7 +145,7 @@ export function DashboardContent() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           {appsLoading ? (
             <div className="space-y-2">
               {[...Array(3)].map((_, i) => (

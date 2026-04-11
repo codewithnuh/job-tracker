@@ -1,6 +1,7 @@
 "use server"
 
 import { headers } from "next/headers"
+import { cookies } from "next/headers"
 import type { ErrorResponse, SuccessResponse } from "@/lib/types/api"
 import { ApiError } from "./utils"
 import { applySetCookieHeaders } from "./cookies"
@@ -11,12 +12,17 @@ async function getRequestCookies(): Promise<string | null> {
   return requestHeaders.get("cookie")
 }
 
+async function getCookieHeader(): Promise<string> {
+  const cookieStore = await cookies()
+  return cookieStore.toString()
+}
+
 interface FetchOptions extends RequestInit {
   revalidate?: number | false
   tags?: string[]
 }
 
-async function refreshTokens(): Promise<boolean> {
+async function refreshTokens(): Promise<string | null> {
   try {
     const response = await fetch(`${API_BASE_URL}/v1/auth/refresh`, {
       method: "POST",
@@ -25,12 +31,16 @@ async function refreshTokens(): Promise<boolean> {
 
     if (response.ok) {
       await applySetCookieHeaders(response.headers.getSetCookie())
-      return true
+      const newCookieHeader = response.headers
+        .getSetCookie()
+        .map((c) => c.split(";")[0])
+        .join("; ")
+      return newCookieHeader
     }
-  } catch {
-    // Refresh failed
+  } catch (error) {
+    console.error("Token refresh failed:", error)
   }
-  return false
+  return null
 }
 
 export async function apiFetch<T>(
@@ -75,26 +85,36 @@ export async function apiFetch<T>(
     method,
     body,
     headers: headersObj,
+    credentials: "include",
     next: Object.keys(nextOptions).length > 0 ? nextOptions : undefined,
   })
 
   if (response.status === 401) {
-    const refreshed = await refreshTokens()
-    if (refreshed) {
-      const newCookieHeader = await getRequestCookies()
-      if (newCookieHeader) {
-        headersObj["Cookie"] = newCookieHeader
-      }
+    const newCookies = await refreshTokens()
+    if (newCookies) {
       const retryResponse = await fetch(url, {
         ...restOptions,
         method,
         body,
-        headers: headersObj,
+        headers: {
+          ...headersObj,
+          Cookie: newCookies,
+        },
+        credentials: "include",
       })
 
       if (retryResponse.ok) {
         const retryData = await retryResponse.json()
         return retryData as SuccessResponse<T>
+      }
+
+      if (retryResponse.status === 401) {
+        throw new ApiError(
+          "Session expired. Please login again.",
+          401,
+          "SESSION_EXPIRED",
+          "Please login again"
+        )
       }
     }
   }

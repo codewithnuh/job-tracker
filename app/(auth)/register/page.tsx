@@ -1,4 +1,4 @@
- "use client"
+"use client"
 
 import { useEffect, useActionState } from "react"
 import Link from "next/link"
@@ -7,7 +7,13 @@ import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { BriefcaseIcon, Loading01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/field"
 import { registerAction } from "@/lib/api/actions/auth"
@@ -32,10 +38,16 @@ export default function RegisterPage() {
     <Card>
       <CardHeader className="items-center text-center">
         <div className="mb-2 flex size-12 items-center justify-center rounded-4xl bg-primary/10">
-          <HugeiconsIcon icon={BriefcaseIcon} strokeWidth={2} className="text-primary" />
+          <HugeiconsIcon
+            icon={BriefcaseIcon}
+            strokeWidth={2}
+            className="text-primary"
+          />
         </div>
         <CardTitle className="text-xl">Create an account</CardTitle>
-        <CardDescription>Sign up to start tracking your job applications</CardDescription>
+        <CardDescription>
+          Sign up to start tracking your job applications
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction}>
@@ -76,7 +88,11 @@ export default function RegisterPage() {
             <Button type="submit" className="w-full" disabled={isPending}>
               {isPending ? (
                 <>
-                  <HugeiconsIcon icon={Loading01Icon} strokeWidth={2} className="animate-spin" />
+                  <HugeiconsIcon
+                    icon={Loading01Icon}
+                    strokeWidth={2}
+                    className="animate-spin"
+                  />
                   Creating account...
                 </>
               ) : (
@@ -87,7 +103,10 @@ export default function RegisterPage() {
         </form>
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link href="/login" className="text-primary underline-offset-4 hover:underline">
+          <Link
+            href="/login"
+            className="text-primary underline-offset-4 hover:underline"
+          >
             Sign in
           </Link>
         </p>

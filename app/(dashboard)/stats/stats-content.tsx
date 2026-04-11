@@ -52,7 +52,7 @@ export function StatsContent() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -183,7 +183,7 @@ export function StatsContent() {
           <CardDescription>Key metrics at a glance</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
             {Object.entries(stats.byStatus)
               .filter(([, count]) => count > 0)
               .sort(([, a], [, b]) => b - a)

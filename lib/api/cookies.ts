@@ -51,7 +51,9 @@ export async function applySetCookieHeaders(
   }
 }
 
-export async function clearAuthCookies(names: string[] = DEFAULT_AUTH_COOKIE_NAMES) {
+export async function clearAuthCookies(
+  names: string[] = DEFAULT_AUTH_COOKIE_NAMES
+) {
   const cookieStore = await cookies()
   names.forEach((name) => {
     cookieStore.delete(name)
@@ -110,7 +112,11 @@ function parseSetCookieString(cookieString: string): ParsedCookie | null {
       }
       case "samesite": {
         const normalized = rawValue.toLowerCase()
-        if (normalized === "strict" || normalized === "lax" || normalized === "none") {
+        if (
+          normalized === "strict" ||
+          normalized === "lax" ||
+          normalized === "none"
+        ) {
           options.sameSite = normalized
         }
         break
