@@ -4,15 +4,16 @@ import useSWR from "swr"
 import { fetcher } from "@/lib/swr/fetcher"
 import { SWR_KEYS } from "@/lib/swr/config"
 import type {
+  ActivityLog,
   Application,
   ListApplicationsFilters,
   PaginationMeta,
 } from "@/lib/types/api"
 import { buildQueryString } from "@/lib/api/utils"
 
-interface ApiResponse<T> {
+interface ApiResponse<T, M = PaginationMeta | null> {
   data: T | null
-  meta: PaginationMeta | null
+  meta: M
   message: string
   status_code: number
 }
@@ -57,5 +58,20 @@ export function useApplication(id: string) {
     isLoading,
     isError: error,
     mutate,
+  }
+}
+
+export function useApplicationActivity(id: string) {
+  const { data, error, isLoading } = useSWR<
+    ApiResponse<ActivityLog[], { total: number }>
+  >(id ? SWR_KEYS.applicationActivity(id) : null, fetcher, {
+    revalidateOnFocus: true,
+  })
+
+  return {
+    activity: data?.data || [],
+    total: data?.meta?.total ?? 0,
+    isLoading,
+    isError: error,
   }
 }

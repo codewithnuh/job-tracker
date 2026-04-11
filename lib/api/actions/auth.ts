@@ -6,6 +6,23 @@ import { applySetCookieHeaders, clearAuthCookies } from "@/lib/api/cookies"
 import type { RegisterInput, User, MeResponse } from "@/lib/types/api"
 import { API_BASE_URL } from "@/lib/config/api"
 
+async function refreshTokens(): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/v1/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+    })
+
+    if (response.ok) {
+      await applySetCookieHeaders(response.headers.getSetCookie())
+      return true
+    }
+  } catch {
+    // Refresh failed
+  }
+  return false
+}
+
 export async function loginAction(_: unknown, formData: FormData) {
   try {
     const email = formData.get("email") as string
@@ -65,10 +82,16 @@ export async function registerAction(
       success: true,
       message: "Registration successful. Please login.",
     }
-  } catch (error: any) {
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: error.message || "An unexpected error occurred",
+      }
+    }
     return {
       success: false,
-      message: error.message || "An unexpected error occurred",
+      message: "An unexpected error occurred",
     }
   }
 }
@@ -83,6 +106,22 @@ export async function logoutAction() {
 
     if (response.ok) {
       await applySetCookieHeaders(response.headers.getSetCookie())
+    } else if (response.status === 401) {
+      const refreshed = await refreshTokens()
+      if (refreshed) {
+        const retryResponse = await fetch(`${API_BASE_URL}/v1/auth/logout`, {
+          method: "POST",
+          cache: "no-store",
+          credentials: "include",
+        })
+        if (retryResponse.ok) {
+          await applySetCookieHeaders(retryResponse.headers.getSetCookie())
+        } else {
+          await clearAuthCookies()
+        }
+        return { success: true, message: "Logged out" }
+      }
+      await clearAuthCookies()
     } else {
       await clearAuthCookies()
     }
@@ -96,6 +135,10 @@ export async function logoutAction() {
   return { success: true, message: "Logged out" }
 }
 
+export async function refreshTokenAction() {
+  return await refreshTokens()
+}
+
 export async function getCurrentUser(): Promise<User | null> {
   try {
     const response = await apiFetch<MeResponse>("/v1/auth/me", {
@@ -106,7 +149,7 @@ export async function getCurrentUser(): Promise<User | null> {
     })
 
     return response.data?.user || null
-  } catch (error) {
+  } catch {
     return null
   }
 }

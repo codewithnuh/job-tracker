@@ -4,6 +4,8 @@ export const SWR_KEYS = {
   user: "/v1/auth/me",
   applications: "/v1/applications",
   application: (id: string) => `/v1/applications/${id}`,
+  applicationActivity: (id: string) =>
+    `/v1/applications/${id}/activity`,
   stats: "/v1/stats",
 } as const
 

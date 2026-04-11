@@ -41,14 +41,19 @@ export async function apiFetch<T>(
     revalidate = 0,
     tags = [],
     headers: customHeaders,
+    body,
+    method,
     ...restOptions
   } = options
 
   const cookieHeader = await getRequestCookies()
 
   const headersObj: HeadersInit = {
-    "Content-Type": "application/json",
     ...(customHeaders as Record<string, string>),
+  }
+
+  if (body) {
+    headersObj["Content-Type"] = "application/json"
   }
 
   if (cookieHeader) {
@@ -67,6 +72,8 @@ export async function apiFetch<T>(
 
   const response = await fetch(url, {
     ...restOptions,
+    method,
+    body,
     headers: headersObj,
     next: Object.keys(nextOptions).length > 0 ? nextOptions : undefined,
   })
@@ -80,6 +87,8 @@ export async function apiFetch<T>(
       }
       const retryResponse = await fetch(url, {
         ...restOptions,
+        method,
+        body,
         headers: headersObj,
       })
 

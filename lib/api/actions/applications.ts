@@ -13,6 +13,7 @@ import type {
   ListApplicationsFilters,
   PaginationMeta,
   ApplicationStatus,
+  UpdateApplicationInput,
 } from "@/lib/types/api"
 
 export async function createApplicationAction(
@@ -76,6 +77,93 @@ export async function createApplicationAction(
   }
 }
 
+export async function updateApplicationAction(
+  _: unknown,
+  formData: FormData
+): Promise<
+  | { success: true; message: string; data?: Application }
+  | { success: false; message: string }
+> {
+  try {
+    const id = (formData.get("id") as string | null)?.trim()
+    if (!id) {
+      return {
+        success: false,
+        message: "Application ID is missing",
+      }
+    }
+
+    const payload: UpdateApplicationInput = {}
+
+    const companyName = (formData.get("companyName") as string | null)?.trim()
+    if (companyName) {
+      payload.companyName = companyName
+    }
+
+    const roleTitle = (formData.get("roleTitle") as string | null)?.trim()
+    if (roleTitle) {
+      payload.roleTitle = roleTitle
+    }
+
+    const status = formData.get("status") as ApplicationStatus | null
+    if (status) {
+      payload.status = status
+    }
+
+    const location = (formData.get("location") as string | null)?.trim()
+    if (location !== undefined) {
+      payload.location = location.length ? location : null
+    }
+
+    const jobUrl = (formData.get("jobUrl") as string | null)?.trim()
+    if (jobUrl !== undefined) {
+      payload.jobUrl = jobUrl.length ? jobUrl : null
+    }
+
+    const salaryMin = (formData.get("salaryMin") as string | null)?.trim()
+    if (salaryMin) {
+      payload.salaryMin = Number(salaryMin)
+    }
+
+    const salaryMax = (formData.get("salaryMax") as string | null)?.trim()
+    if (salaryMax) {
+      payload.salaryMax = Number(salaryMax)
+    }
+
+    const notes = (formData.get("notes") as string | null)?.trim()
+    if (notes !== undefined) {
+      payload.notes = notes.length ? notes : null
+    }
+
+    const response = await apiFetch<Application>(`/v1/applications/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+      cache: "no-store",
+    })
+
+    revalidateApplication(id)
+    revalidateApplications()
+    revalidateStats()
+
+    return {
+      success: true,
+      message: response.message || "Application updated successfully",
+      data: response.data || undefined,
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        success: false,
+        message: error.message,
+      }
+    }
+    return {
+      success: false,
+      message: "An unexpected error occurred",
+    }
+  }
+}
+
 export async function getApplicationsAction(
   filters: ListApplicationsFilters = {}
 ): Promise<{
@@ -103,7 +191,7 @@ export async function getApplicationsAction(
     return {
       success: true,
       data: response.data || [],
-      meta: response.meta as PaginationMeta | undefined,
+      meta: response.meta as unknown as PaginationMeta,
     }
   } catch (error) {
     if (error instanceof Error) {

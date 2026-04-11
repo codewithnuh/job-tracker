@@ -103,6 +103,17 @@ export interface CreateApplicationInput {
   notes?: string;
 }
 
+export interface UpdateApplicationInput {
+  companyName?: string;
+  roleTitle?: string;
+  status?: ApplicationStatus;
+  location?: string | null;
+  jobUrl?: string | null;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  notes?: string | null;
+}
+
 export interface UpdateStatusInput {
   status: ApplicationStatus;
   note?: string;
