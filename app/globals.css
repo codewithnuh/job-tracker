@@ -122,3 +122,143 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes first {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(30px, -50px) rotate(10deg);
+  }
+  66% {
+    transform: translate(-20px, 20px) rotate(5deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+@keyframes second {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(-30px, 50px) rotate(-10deg);
+  }
+  66% {
+    transform: translate(20px, -20px) rotate(-5deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+@keyframes third {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(30px, 50px) rotate(10deg);
+  }
+  66% {
+    transform: translate(-20px, -20px) rotate(5deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+@keyframes fourth {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(-50px, -30px) rotate(-10deg);
+  }
+  66% {
+    transform: translate(30px, 30px) rotate(5deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+@keyframes fifth {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(40px, -40px) rotate(10deg);
+  }
+  66% {
+    transform: translate(-30px, 20px) rotate(-5deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+.animate-first {
+  animation: first var(--animation-duration, 20s) ease-in-out infinite;
+  animation-delay: var(--animation-delay, 0s);
+  animation-direction: var(--animation-direction, forwards);
+}
+
+.animate-second {
+  animation: second var(--animation-duration, 20s) ease-in-out infinite;
+  animation-delay: var(--animation-delay, 0s);
+  animation-direction: var(--animation-direction, forwards);
+}
+
+.animate-third {
+  animation: third var(--animation-duration, 20s) ease-in-out infinite;
+  animation-delay: var(--animation-delay, 0s);
+  animation-direction: var(--animation-direction, forwards);
+}
+
+.animate-fourth {
+  animation: fourth var(--animation-duration, 20s) ease-in-out infinite;
+  animation-delay: var(--animation-delay, 0s);
+  animation-direction: var(--animation-direction, forwards);
+}
+
+.animate-fifth {
+  animation: fifth var(--animation-duration, 20s) ease-in-out infinite;
+  animation-delay: var(--animation-delay, 0s);
+  animation-direction: var(--animation-direction, forwards);
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% - 20px));
+  }
+}
+
+.animate-scroll {
+  animation: scroll var(--animation-duration, 40s) linear infinite;
+}
+
+@keyframes aurora {
+  0% {
+    background-position: 50% 50%, 50% 50%;
+  }
+  25% {
+    background-position: 40% 50%, 50% 50%;
+  }
+  50% {
+    background-position: 60% 50%, 50% 50%;
+  }
+  75% {
+    background-position: 40% 50%, 50% 50%;
+  }
+  100% {
+    background-position: 50% 50%, 50% 50%;
+  }
+}
+
+.after\:animate-aurora::after {
+  animation: aurora var(--aurora-duration, 20s) ease-in-out infinite;
+}

@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon, PlayCircleIcon } from "@hugeicons/core-free-icons"
 import { LANDING_CONTENT } from "@/lib/constants/landing-content"
+import { Spotlight } from "@/components/ui/spotlight-new"
 
 export function LandingHero() {
   const { hero } = LANDING_CONTENT
 
   return (
     <section className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-32">
+      <Spotlight className="hidden md:block" />
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(120,119,198,0.08),transparent)]" />

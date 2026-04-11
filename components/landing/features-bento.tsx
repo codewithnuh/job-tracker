@@ -1,6 +1,5 @@
 "use client"
 
-import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
@@ -13,6 +12,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { LANDING_CONTENT } from "@/lib/constants/landing-content"
 import { cn } from "@/lib/utils"
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid"
 
 const iconMap: Record<string, typeof BriefcaseIcon> = {
   Briefcase: BriefcaseIcon,
@@ -41,37 +41,35 @@ export function LandingFeatures() {
           </p>
         </div>
 
-        <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
+        <BentoGrid className="mx-auto max-w-5xl">
           {features.items.map((feature, index) => {
             const IconComponent = iconMap[feature.icon] || BriefcaseIcon
             return (
-              <Card
+              <BentoGridItem
                 key={index}
                 className={cn(
-                  "border-0 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md",
                   feature.className,
-                  "bg-gradient-to-br from-background to-muted/50"
+                  "bg-gradient-to-br from-background to-muted/50 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
                 )}
-              >
-                <CardContent className="p-6">
-                  <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary/10">
+                icon={
+                  <div className="mb-2 flex size-12 items-center justify-center rounded-xl bg-primary/10">
                     <HugeiconsIcon
                       icon={IconComponent}
                       strokeWidth={2}
                       className="size-6 text-primary"
                     />
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold">
-                    {feature.title}
-                  </h3>
+                }
+                title={<h3 className="text-lg font-semibold">{feature.title}</h3>}
+                description={
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     {feature.description}
                   </p>
-                </CardContent>
-              </Card>
+                }
+              />
             )
           })}
-        </div>
+        </BentoGrid>
       </div>
     </section>
   )

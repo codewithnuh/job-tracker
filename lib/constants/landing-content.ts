@@ -1,3 +1,5 @@
+"use client "
+
 export const LANDING_CONTENT = {
   meta: {
     title: "JobTracker - Track Your Job Search Without the Chaos",
