@@ -1,6 +1,11 @@
 {
   "version": 1,
   "skills": {
+    "copywriting": {
+      "source": "smithery.ai",
+      "sourceType": "well-known",
+      "computedHash": "1ee9d840d3d1b64a28cbd60f628708596359400d8c40172ed7eedfc4496ff88e"
+    },
     "shadcn": {
       "source": "shadcn/ui",
       "sourceType": "github",
