@@ -27,17 +27,17 @@ import { logoutAction } from "@/lib/api/actions/auth"
 const navItems = [
   {
     title: "Dashboard",
-    href: "/",
+    href: "/dashboard",
     icon: Home01Icon,
   },
   {
     title: "Applications",
-    href: "/applications",
+    href: "/dashboard/applications",
     icon: BriefcaseIcon,
   },
   {
     title: "Stats",
-    href: "/stats",
+    href: "/dashboard/stats",
     icon: ChartPieIcon,
   },
 ]
@@ -104,7 +104,7 @@ export function DashboardNav({ className }: DashboardNavProps) {
       )}
     >
       <div className="flex h-14 items-center border-b px-6">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <HugeiconsIcon
             icon={BriefcaseIcon}
             strokeWidth={2}
@@ -165,7 +165,7 @@ export function MobileNav() {
         </SheetHeader>
         <div className="flex h-14 items-center justify-between border-b px-4">
           <Link
-            href="/"
+            href="/dashboard"
             onClick={() => setOpen(false)}
             className="flex items-center gap-2"
           >

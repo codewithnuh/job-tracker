@@ -110,7 +110,7 @@ export function DashboardContent() {
             </Button>
           </form>
           <Button asChild>
-            <Link href="/applications/add">
+            <Link href="/dashboard/applications/add">
               <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
               Add Application
             </Link>
@@ -141,7 +141,7 @@ export function DashboardContent() {
           <div className="flex items-center justify-between">
             <CardTitle>Recent Applications</CardTitle>
             <Button variant="outline" size="sm" asChild>
-              <Link href="/applications">View all</Link>
+              <Link href="/dashboard/applications">View all</Link>
             </Button>
           </div>
         </CardHeader>
@@ -158,7 +158,7 @@ export function DashboardContent() {
                 No applications yet. Add your first one to get started.
               </p>
               <Button className="mt-4" asChild>
-                <Link href="/applications/add">
+                <Link href="/dashboard/applications/add">
                   <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
                   Add Application
                 </Link>
@@ -180,7 +180,7 @@ export function DashboardContent() {
                   <TableRow key={app.id}>
                     <TableCell className="font-medium">
                       <Link
-                        href={`/applications/${app.id}`}
+                        href={`/dashboard/applications/${app.id}`}
                         className="hover:underline"
                       >
                         {app.companyName}

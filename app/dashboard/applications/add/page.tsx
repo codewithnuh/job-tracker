@@ -54,7 +54,7 @@ export default function AddApplicationPage() {
   useEffect(() => {
     if (state.success) {
       toast.success(state.message)
-      router.push("/applications")
+      router.push("/dashboard/applications")
     } else if (!isPending && state.message && !state.success) {
       toast.error(state.message)
     }

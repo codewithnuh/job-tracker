@@ -321,7 +321,7 @@ function DeleteDialog({
       if (result.success) {
         setOpen(false)
         toast.success(result.message)
-        router.push("/applications")
+        router.push("/dashboard/applications")
       } else {
         toast.error(result.message)
       }
@@ -538,7 +538,7 @@ export default function ApplicationDetailPage({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" asChild className="shrink-0">
-            <Link href="/applications">
+            <Link href="/dashboard/applications">
               <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
             </Link>
           </Button>

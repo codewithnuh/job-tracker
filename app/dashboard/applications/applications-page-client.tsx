@@ -152,7 +152,7 @@ export default function ApplicationsPageClient({
           </p>
         </div>
         <Button asChild className="w-full sm:w-auto">
-          <Link href="/applications/add">
+          <Link href="/dashboard/applications/add">
             <HugeiconsIcon
               icon={PlusSignIcon}
               strokeWidth={2}
@@ -243,7 +243,7 @@ export default function ApplicationsPageClient({
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
                           <Link
-                            href={`/applications/${app.id}`}
+                            href={`/dashboard/applications/${app.id}`}
                             className="hover:underline"
                           >
                             {app.companyName}
@@ -294,7 +294,7 @@ export default function ApplicationsPageClient({
                             className="size-8"
                             asChild
                           >
-                            <Link href={`/applications/${app.id}`}>
+                            <Link href={`/dashboard/applications/${app.id}`}>
                               <HugeiconsIcon
                                 icon={Edit01Icon}
                                 strokeWidth={2}
