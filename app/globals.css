@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css"; /* Updated import */
 
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -243,19 +242,29 @@
 
 @keyframes aurora {
   0% {
-    background-position: 50% 50%, 50% 50%;
+    background-position:
+      50% 50%,
+      50% 50%;
   }
   25% {
-    background-position: 40% 50%, 50% 50%;
+    background-position:
+      40% 50%,
+      50% 50%;
   }
   50% {
-    background-position: 60% 50%, 50% 50%;
+    background-position:
+      60% 50%,
+      50% 50%;
   }
   75% {
-    background-position: 40% 50%, 50% 50%;
+    background-position:
+      40% 50%,
+      50% 50%;
   }
   100% {
-    background-position: 50% 50%, 50% 50%;
+    background-position:
+      50% 50%,
+      50% 50%;
   }
 }
 

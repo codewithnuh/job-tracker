@@ -18,10 +18,10 @@ export const metadata = {
 
 export default function LandingPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-background antialiased">
+    <main className="relative min-h-screen overflow-hidden antialiased">
       <LandingNavbar />
 
-      <div className="relative mx-auto max-w-7xl pt-4 antialiased">
+      <div className="relative mx-auto max-w-7xl px-4 pt-4 antialiased sm:px-6 lg:px-8">
         <LandingHero />
         <LandingStatsBar />
         <LandingProblem />

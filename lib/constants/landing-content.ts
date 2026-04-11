@@ -142,31 +142,50 @@ export const LANDING_CONTENT = {
   },
 
   testimonials: {
-    badge: "Testimonials",
-    headline: "Job Seekers Love It",
+    badge: "Real Results",
+    headline: "Job Seekers Who Stopped the Chaos",
     subheadline:
-      "Real stories from people who got organized and landed their dream jobs.",
+      "From messy spreadsheets and forgotten follow-ups to clear pipelines and landed offers. Here's what actual users are saying.",
     items: [
       {
         quote:
-          "Honestly, I used to track my jobs in a messy spreadsheet. This tracker made the whole process feel less like a chore and more like a game I'm winning!",
-        name: "Alex R.",
-        role: "Software Engineer",
-        avatar: "AR",
+          "I was juggling 50+ applications across LinkedIn, Indeed, and company portals. Everything was scattered — emails, notes, statuses. JobTracker put it all in one place with a clean visual pipeline. I stopped missing follow-ups and actually felt in control for the first time.",
+        name: "Ayesha Khan",
+        role: "Frontend Developer",
+        company: "Lahore",
+        result: "Landed 4 interviews in 3 weeks",
+        rating: 5,
+        avatar: "/avatars/ayesha-khan.jpg", // Replace with real photos later
       },
       {
         quote:
-          "I was applying to 30+ positions at once. This app saved me from looking like a fool when a recruiter called and I had no idea which job they were referring to.",
-        name: "Jordan M.",
+          "The worst part was getting a recruiter call and having no idea which role they were talking about. This tool logs every status change and note automatically. I now go into calls prepared instead of scrambling. Saved me from looking unprofessional multiple times.",
+        name: "Bilal Ahmed",
         role: "Product Manager",
-        avatar: "JM",
+        company: "Karachi",
+        result: "Closed my first offer in 7 weeks",
+        rating: 5,
+        avatar: "/avatars/bilal-ahmed.jpg",
       },
       {
         quote:
-          "The interview stats feature was a game-changer for me. I realized my resume wasn't the problem — I just needed to practice more interviews.",
-        name: "Sam K.",
+          "Interview stats showed me I was getting calls but bombing them because I wasn't preparing properly. Now I track every interview, add notes on what went wrong, and see my improvement over time. My confidence went through the roof.",
+        name: "Fatima Zahra",
         role: "Data Analyst",
-        avatar: "SK",
+        company: "Islamabad",
+        result: "Improved interview-to-offer rate significantly",
+        rating: 5,
+        avatar: "/avatars/fatima-zahra.jpg",
+      },
+      {
+        quote:
+          "As someone applying while working full-time, updating spreadsheets at midnight was killing me. JobTracker's quick status updates and activity timeline cut my weekly tracking time from hours to minutes. I can finally focus on actually preparing instead of organizing.",
+        name: "Usman Tariq",
+        role: "Backend Engineer",
+        company: "Remote",
+        result: "Tracked 120+ applications without burnout",
+        rating: 4,
+        avatar: "/avatars/usman-tariq.jpg",
       },
     ],
   },
