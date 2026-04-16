@@ -8,32 +8,27 @@ export const CACHE_TAGS = {
   USER: "user",
 } as const
 
-const cacheProfile = "default"
-
 export function revalidateApplications() {
-  revalidateTag(CACHE_TAGS.APPLICATIONS, cacheProfile)
-  revalidatePath("/applications")
-  revalidatePath("/")
+  revalidateTag(CACHE_TAGS.APPLICATIONS, "default")
+  revalidatePath("/dashboard/applications")
 }
 
 export function revalidateApplication(id: string) {
-  revalidateTag(`${CACHE_TAGS.APPLICATION}-${id}`, cacheProfile)
+  revalidateTag(`${CACHE_TAGS.APPLICATION}-${id}`, "default")
   revalidateApplicationActivity(id)
-  revalidateApplications()
 }
 
 export function revalidateApplicationActivity(id: string) {
-  revalidateTag(`${CACHE_TAGS.ACTIVITY}-${id}`, cacheProfile)
+  revalidateTag(`${CACHE_TAGS.ACTIVITY}-${id}`, "default")
 }
 
 export function revalidateStats() {
-  revalidateTag(CACHE_TAGS.STATS, cacheProfile)
-  revalidatePath("/")
+  revalidateTag(CACHE_TAGS.STATS, "default")
+  revalidatePath("/dashboard")
 }
 
 export function revalidateUser() {
-  revalidateTag(CACHE_TAGS.USER, cacheProfile)
-  revalidatePath("/")
+  revalidateTag(CACHE_TAGS.USER, "default")
 }
 
 export function revalidateAll() {

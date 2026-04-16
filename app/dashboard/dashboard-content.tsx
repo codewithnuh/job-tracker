@@ -69,9 +69,9 @@ export function DashboardContent() {
       message: "",
     }
   )
-  const { user, isLoading: userLoading } = useUser()
-  const { stats, isLoading: statsLoading } = useStats()
-  const { applications: recentApps, isLoading: appsLoading } = useApplications({
+  const { user, isLoading: userLoading, isError: userError } = useUser()
+  const { stats, isLoading: statsLoading, isError: statsError } = useStats()
+  const { applications: recentApps, isLoading: appsLoading, isError: appsError } = useApplications({
     page: 1,
     limit: 5,
   })
@@ -86,7 +86,16 @@ export function DashboardContent() {
       toast.error(logoutState.message)
     }
   }, [logoutState, isLogoutPending, router])
-  console.log(user)
+
+  if (userError || statsError || appsError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <p className="text-destructive mb-4 font-medium">Failed to load dashboard data</p>
+        <Button onClick={() => window.location.reload()}>Try Again</Button>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col gap-4 sm:gap-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

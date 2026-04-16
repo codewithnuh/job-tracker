@@ -1,15 +1,7 @@
-"use client"
-
 import useSWR from "swr"
-import { fetcher } from "@/lib/swr/fetcher"
 import { SWR_KEYS } from "@/lib/swr/config"
+import { getStatsAction } from "@/lib/api/actions/stats"
 import type { StatsResponse, ApplicationStatus } from "@/lib/types/api"
-
-interface ApiResponse<T> {
-  data: T
-  message: string
-  status_code: number
-}
 
 const defaultByStatus: Record<ApplicationStatus, number> = {
   APPLIED: 0,
@@ -27,18 +19,18 @@ const defaultStats: StatsResponse = {
 }
 
 export function useStats() {
-  const { data, error, isLoading, mutate } = useSWR<ApiResponse<StatsResponse>>(
+  const { data, error, isLoading, mutate } = useSWR(
     SWR_KEYS.stats,
-    fetcher,
+    () => getStatsAction(),
     {
       revalidateOnFocus: true,
     }
   )
 
   return {
-    stats: data?.data ?? defaultStats,
+    stats: (data?.data as StatsResponse) ?? defaultStats,
     isLoading,
-    isError: error,
+    isError: !!error || data?.success === false,
     mutate,
   }
 }

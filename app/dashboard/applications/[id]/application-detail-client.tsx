@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState, useTransition, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -84,17 +84,25 @@ interface ApplicationDetailPageProps {
 function StatusUpdateForm({
   applicationId,
   currentStatus,
+  latestNote,
   onSuccess,
   compact = false,
 }: {
   applicationId: string
   currentStatus: ApplicationStatus
+  latestNote?: string
   onSuccess?: () => void
   compact?: boolean
 }) {
   const [selectedStatus, setSelectedStatus] =
     useState<ApplicationStatus>(currentStatus)
-  const [note, setNote] = useState("")
+  const [note, setNote] = useState(latestNote || "")
+
+  // Sync state if props change (e.g., after an update)
+  useEffect(() => {
+    setSelectedStatus(currentStatus)
+    setNote(latestNote || "")
+  }, [currentStatus, latestNote])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -103,12 +111,12 @@ function StatusUpdateForm({
     formData.set("id", applicationId)
 
     const status = formData.get("status") as ApplicationStatus
+    const noteValue = formData.get("note") as string
 
-    const result = await updateStatusDirectAction(applicationId, status)
+    const result = await updateStatusDirectAction(applicationId, status, noteValue)
 
     if (result.success) {
       toast.success(result.message)
-      setNote("")
       onSuccess?.()
     } else {
       toast.error(result.message)
@@ -142,7 +150,7 @@ function StatusUpdateForm({
         <Button
           type="submit"
           size={compact ? "sm" : "default"}
-          disabled={selectedStatus === currentStatus}
+          disabled={selectedStatus === currentStatus && note === (latestNote || "")}
         >
           Update
         </Button>
@@ -460,11 +468,10 @@ function ActivityTimeline({
         {activity.map((entry, index) => (
           <div key={entry.id} className="relative flex gap-4 pl-1">
             <div
-              className={`relative z-10 flex size-8 items-center justify-center rounded-full border ${
-                index === 0
+              className={`relative z-10 flex size-8 items-center justify-center rounded-full border ${index === 0
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-background"
-              }`}
+                }`}
             >
               {index === 0 ? (
                 <HugeiconsIcon
@@ -518,7 +525,7 @@ export default function ApplicationDetailPage({
   applicationId,
 }: ApplicationDetailPageProps) {
   const { application, isLoading, mutate } = useApplication(applicationId)
-  const { activity, isLoading: logsLoading } =
+  const { activity, isLoading: logsLoading, mutate: mutateLogs } =
     useApplicationActivity(applicationId)
 
   if (isLoading) {
@@ -684,7 +691,11 @@ export default function ApplicationDetailPage({
               <StatusUpdateForm
                 applicationId={application.id}
                 currentStatus={application.status}
-                onSuccess={mutate}
+                latestNote={activity.length > 0 ? activity[0].note || undefined : undefined}
+                onSuccess={() => {
+                  mutate()
+                  mutateLogs()
+                }}
                 compact
               />
             </CardContent>

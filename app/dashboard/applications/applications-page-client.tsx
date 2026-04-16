@@ -41,6 +41,7 @@ import {
 } from "@/components/ui/dialog"
 import { deleteApplicationAction } from "@/lib/api/actions/applications"
 import { useApplications } from "@/lib/swr/hooks"
+
 import type { ApplicationStatus, ListApplicationsFilters } from "@/lib/types"
 
 const statusColors: Record<ApplicationStatus, string> = {
@@ -81,14 +82,15 @@ export default function ApplicationsPageClient({
     ...initialFilters,
   })
   const { applications, meta, isLoading, mutate } = useApplications(filters)
-
+  console.log({ applications })
   const totalItems = applications.length || 0
 
   function handleFilterChange(
     key: keyof ListApplicationsFilters,
     value: string
   ) {
-    setFilters((prev) => ({ ...prev, [key]: value || undefined, page: 1 }))
+    const newValue = value === "Status" ? undefined : value
+    setFilters((prev) => ({ ...prev, [key]: newValue || undefined, page: 1 }))
   }
 
   function initiateDelete(id: string) {

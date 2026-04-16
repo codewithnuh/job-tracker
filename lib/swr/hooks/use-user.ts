@@ -1,32 +1,22 @@
-"use client"
-
 import useSWR from "swr"
-import { fetcher } from "@/lib/swr/fetcher"
 import { SWR_KEYS } from "@/lib/swr/config"
-import type { User } from "@/lib/types/api"
-
-interface MeResponse {
-  data?: {
-    user?: User
-  }
-  message: string
-  status_code: number
-}
+import { getCurrentUser } from "@/lib/api/actions/auth"
 
 export function useUser() {
-  const { data, error, isLoading, mutate } = useSWR<MeResponse>(
+  const { data, error, isLoading, mutate } = useSWR(
     SWR_KEYS.user,
-    fetcher,
+    () => getCurrentUser(),
     {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
+      refreshInterval: 0,
     }
   )
-  console.log({ data })
+
   return {
-    user: data?.data?.user || null,
+    user: data || null,
     isLoading,
-    isError: error,
+    isError: !!error,
     mutate,
   }
 }

@@ -1,35 +1,16 @@
-"use client"
-
 import useSWR from "swr"
-import { fetcher } from "@/lib/swr/fetcher"
 import { SWR_KEYS } from "@/lib/swr/config"
-import type {
-  ActivityLog,
-  Application,
-  ListApplicationsFilters,
-  PaginationMeta,
-} from "@/lib/types/api"
-import { buildQueryString } from "@/lib/api/utils"
-
-interface ApiResponse<T, M = PaginationMeta | null> {
-  data: T | null
-  meta: M
-  message: string
-  status_code: number
-}
+import {
+  getApplicationsAction,
+  getApplicationAction,
+} from "@/lib/api/actions/applications"
+import { getActivityLogAction } from "@/lib/api/actions/activity"
+import type { ListApplicationsFilters } from "@/lib/types/api"
 
 export function useApplications(filters: ListApplicationsFilters = {}) {
-  const query = buildQueryString({
-    status: filters.status,
-    companyName: filters.companyName,
-    location: filters.location,
-    page: filters.page || 1,
-    limit: filters.limit || 10,
-  })
-
-  const { data, error, isLoading, mutate } = useSWR<ApiResponse<Application[]>>(
-    `${SWR_KEYS.applications}${query}`,
-    fetcher,
+  const { data, error, isLoading, mutate } = useSWR(
+    [SWR_KEYS.applications, JSON.stringify(filters)],
+    () => getApplicationsAction(filters),
     {
       revalidateOnFocus: true,
     }
@@ -37,17 +18,17 @@ export function useApplications(filters: ListApplicationsFilters = {}) {
 
   return {
     applications: data?.data || [],
-    meta: data?.meta ?? undefined,
+    meta: data?.meta,
     isLoading,
-    isError: error,
+    isError: !!error || data?.success === false,
     mutate,
   }
 }
 
 export function useApplication(id: string) {
-  const { data, error, isLoading, mutate } = useSWR<ApiResponse<Application>>(
+  const { data, error, isLoading, mutate } = useSWR(
     id ? SWR_KEYS.application(id) : null,
-    fetcher,
+    () => getApplicationAction(id),
     {
       revalidateOnFocus: true,
     }
@@ -56,22 +37,24 @@ export function useApplication(id: string) {
   return {
     application: data?.data || null,
     isLoading,
-    isError: error,
+    isError: !!error || data?.success === false,
     mutate,
   }
 }
 
 export function useApplicationActivity(id: string) {
-  const { data, error, isLoading } = useSWR<
-    ApiResponse<ActivityLog[], { total: number }>
-  >(id ? SWR_KEYS.applicationActivity(id) : null, fetcher, {
-    revalidateOnFocus: true,
-  })
+  const { data, error, isLoading, mutate } = useSWR(
+    id ? SWR_KEYS.applicationActivity(id) : null,
+    () => getActivityLogAction(id),
+    {
+      revalidateOnFocus: true,
+    }
+  )
 
   return {
     activity: data?.data || [],
-    total: data?.meta?.total ?? 0,
     isLoading,
-    isError: error,
+    isError: !!error || data?.success === false,
+    mutate,
   }
 }
