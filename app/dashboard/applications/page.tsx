@@ -1,5 +1,11 @@
+import type { Metadata } from "next"
 import ApplicationsPageClient from "./applications-page-client"
 import type { ApplicationStatus } from "@/lib/types"
+
+export const metadata: Metadata = {
+  title: "Applications",
+  description: "View and filter your job applications.",
+}
 
 interface ApplicationsPageProps {
   searchParams: Promise<{

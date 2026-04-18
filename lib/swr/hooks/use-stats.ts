@@ -21,10 +21,7 @@ const defaultStats: StatsResponse = {
 export function useStats() {
   const { data, error, isLoading, mutate } = useSWR(
     SWR_KEYS.stats,
-    () => getStatsAction(),
-    {
-      revalidateOnFocus: true,
-    }
+    () => getStatsAction()
   )
 
   return {

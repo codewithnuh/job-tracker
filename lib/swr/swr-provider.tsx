@@ -12,9 +12,9 @@ export function SWRProvider({ children, initialData }: SWRProviderProps) {
   return (
     <SWRConfig
       value={{
-        revalidateOnFocus: true,
+        revalidateOnFocus: false,
         revalidateOnReconnect: true,
-        dedupingInterval: 5000,
+        dedupingInterval: 10000,
         fallback: initialData || {},
       }}
     >
