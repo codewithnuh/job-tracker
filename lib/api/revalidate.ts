@@ -9,25 +9,25 @@ export const CACHE_TAGS = {
 } as const
 
 export function revalidateApplications() {
-  revalidateTag(CACHE_TAGS.APPLICATIONS)
+  revalidateTag(CACHE_TAGS.APPLICATIONS, "max")
   revalidatePath("/dashboard/applications")
 }
 
 export function revalidateApplication(id: string) {
-  revalidateTag(`${CACHE_TAGS.APPLICATION}-${id}`)
+  revalidateTag(`${CACHE_TAGS.APPLICATION}-${id}`, "max")
   revalidateApplicationActivity(id)
 }
 
 export function revalidateApplicationActivity(id: string) {
-  revalidateTag(`${CACHE_TAGS.ACTIVITY}-${id}`)
+  revalidateTag(`${CACHE_TAGS.ACTIVITY}-${id}`, "max")
 }
 
 export function revalidateStats() {
-  revalidateTag(CACHE_TAGS.STATS)
+  revalidateTag(CACHE_TAGS.STATS, "max")
 }
 
 export function revalidateUser() {
-  revalidateTag(CACHE_TAGS.USER)
+  revalidateTag(CACHE_TAGS.USER, "max")
 }
 
 export function revalidateAll() {
