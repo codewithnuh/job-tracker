@@ -12,7 +12,7 @@ export function LandingFooter() {
   const { footer } = LANDING_CONTENT
 
   return (
-    <footer className="relative border-t-4 border-foreground bg-background py-16">
+    <footer className="relative border-t border-border bg-background py-16">
       <div
         className={cn(
           "absolute inset-0",
@@ -26,11 +26,11 @@ export function LandingFooter() {
         <div className="mb-12 grid grid-cols-2 gap-8 md:grid-cols-5">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="group mb-6 flex items-center gap-2">
-              <div className="flex size-10 items-center justify-center rounded-none border-2 border-foreground bg-gradient-to-br from-primary to-primary/80 shadow-[4px_4px_0px_0px_var(--primary)] transition-all group-hover:shadow-[6px_6px_0px_0px_var(--primary)]">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-all group-hover:bg-primary/90">
                 <HugeiconsIcon
                   icon={BriefcaseIcon}
                   strokeWidth={2}
-                  className="size-5 text-primary-foreground"
+                  className="size-5"
                 />
               </div>
               <span className="text-xl font-black uppercase tracking-tight">
@@ -53,6 +53,9 @@ export function LandingFooter() {
                     <Link
                       href={link.href}
                       className="relative text-base font-medium text-muted-foreground transition-all after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:text-foreground hover:after:w-full"
+                      {...(link.href.startsWith("http")
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
                     >
                       {link.label}
                     </Link>
@@ -63,7 +66,7 @@ export function LandingFooter() {
           ))}
         </div>
 
-        <Separator className="mb-8 border-2 border-border" />
+        <Separator className="mb-8" />
 
         <div className="flex flex-col items-center justify-between gap-4 text-sm font-medium text-muted-foreground md:flex-row">
           <p className="text-center md:text-left">{footer.copyright}</p>

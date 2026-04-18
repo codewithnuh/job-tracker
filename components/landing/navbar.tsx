@@ -54,7 +54,7 @@ export function LandingNavbar() {
         className={cn(
           "fixed top-0 right-0 left-0 z-50 transition-all duration-300",
           isScrolled
-            ? "border-b border-white/5 bg-background/80 shadow-lg backdrop-blur-xl"
+            ? "border-b border-border bg-background/80 shadow-sm backdrop-blur-xl"
             : "bg-transparent"
         )}
       >
@@ -65,11 +65,11 @@ export function LandingNavbar() {
 
         <Container className="flex h-14 items-center justify-between md:h-16">
           <Link href="/" className="group flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-none bg-gradient-to-br from-primary to-primary/80 shadow-[2px_2px_0px_0px_var(--primary)] transition-all group-hover:shadow-[4px_4px_0px_0px_var(--primary)] md:size-9">
+            <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-all group-hover:bg-primary/90 md:size-9">
               <HugeiconsIcon
                 icon={BriefcaseIcon}
                 strokeWidth={2}
-                className="size-4 text-primary-foreground md:size-5"
+                className="size-4 md:size-5"
               />
             </div>
             <span className="text-base font-black tracking-tight uppercase md:text-lg">
@@ -96,7 +96,7 @@ export function LandingNavbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-none border-2 border-transparent hover:border-foreground hover:bg-transparent"
+                className="hover:bg-accent"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               >
                 <HugeiconsIcon
@@ -109,7 +109,7 @@ export function LandingNavbar() {
             )}
             <Button
               asChild
-              className="rounded-none h-10 border-2 border-foreground bg-primary px-5 font-bold uppercase tracking-widest shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none lg:h-11 lg:px-6"
+              className="h-9 px-4 font-semibold tracking-tight shadow-sm transition-all hover:bg-primary/90 lg:h-10 lg:px-5"
             >
               <Link href={nav.ctaHref}>{nav.cta}</Link>
             </Button>
@@ -118,11 +118,16 @@ export function LandingNavbar() {
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-none hover:bg-white/10 lg:hidden"
-            onClick={() => setIsMobileMenuOpen(true)}
+            className="relative z-[60] hover:bg-accent lg:hidden"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            <HugeiconsIcon icon={Menu01Icon} strokeWidth={2} className="size-5" />
-            <span className="sr-only">Open menu</span>
+            <HugeiconsIcon
+              icon={isMobileMenuOpen ? Cancel01Icon : Menu01Icon}
+              strokeWidth={2}
+              className="size-5 transition-transform duration-300"
+              style={{ transform: isMobileMenuOpen ? "rotate(90deg)" : "rotate(0deg)" }}
+            />
+            <span className="sr-only">{isMobileMenuOpen ? "Close menu" : "Open menu"}</span>
           </Button>
         </Container>
       </header>
@@ -141,38 +146,12 @@ export function LandingNavbar() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="flex min-h-screen flex-col p-6"
+              className="flex min-h-screen flex-col px-6 pt-20 pb-8"
             >
-              <div className="flex items-center justify-between">
-                <Link
-                  href="/"
-                  className="flex items-center gap-2"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <div className="flex size-9 items-center justify-center rounded-none bg-gradient-to-br from-primary to-primary/80 shadow-[2px_2px_0px_0px_var(--primary)]">
-                    <HugeiconsIcon
-                      icon={BriefcaseIcon}
-                      strokeWidth={2}
-                      className="size-5 text-primary-foreground"
-                    />
-                  </div>
-                  <span className="text-lg font-black uppercase">{nav.logo}</span>
-                </Link>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-none"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <HugeiconsIcon
-                    icon={Cancel01Icon}
-                    strokeWidth={2}
-                    className="size-5"
-                  />
-                </Button>
-              </div>
-
-              <nav className="flex flex-1 flex-col justify-center gap-3 py-8">
+              <nav
+                className="flex flex-1 flex-col justify-center gap-3"
+                onClick={(e) => e.stopPropagation()}
+              >
                 {nav.links.map((link, index) => (
                   <motion.div
                     key={link.href}
@@ -182,7 +161,7 @@ export function LandingNavbar() {
                   >
                     <Link
                       href={link.href}
-                      className="flex items-center justify-between rounded-none border-2 border-border bg-background px-6 py-4 text-lg font-bold uppercase tracking-wider transition-all hover:border-primary hover:bg-muted/50"
+                      className="flex items-center justify-between rounded-xl border border-border bg-card px-6 py-4 text-lg font-semibold tracking-tight transition-all hover:border-primary/50 hover:bg-accent"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {link.label}
@@ -196,10 +175,13 @@ export function LandingNavbar() {
                 ))}
               </nav>
 
-              <div className="flex flex-col gap-4 pb-8">
+              <div
+                className="flex flex-col gap-4 pt-5 pb-8"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Button
                   variant="outline"
-                  className="rounded-none h-14 border-2 border-foreground text-base font-bold uppercase"
+                  className="h-14 rounded-xl border border-border text-base font-semibold"
                   onClick={() => {
                     setTheme(theme === "dark" ? "light" : "dark")
                     setIsMobileMenuOpen(false)
@@ -210,13 +192,13 @@ export function LandingNavbar() {
                     strokeWidth={2}
                     className="mr-3 size-5"
                   />
-                  <span className="font-bold uppercase">
+                  <span>
                     {theme === "dark" ? "Light Mode" : "Dark Mode"}
                   </span>
                 </Button>
                 <Button
                   asChild
-                  className="rounded-none h-14 border-2 border-foreground bg-primary text-base font-bold uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+                  className="h-14 rounded-xl bg-primary text-base font-bold tracking-tight shadow-sm transition-all hover:bg-primary/90"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Link href={nav.ctaHref}>{nav.cta}</Link>

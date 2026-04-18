@@ -23,7 +23,7 @@ export default function LandingPage() {
 
       <div className="relative mx-auto max-w-7xl px-4 pt-4 antialiased sm:px-6 lg:px-8">
         <LandingHero />
-        <LandingStatsBar />
+        {/* <LandingStatsBar /> */}
         <LandingProblem />
         <LandingFeatures />
         <LandingHowItWorks />

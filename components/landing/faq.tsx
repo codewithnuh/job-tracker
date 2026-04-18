@@ -107,27 +107,27 @@ export function LandingFAQ() {
                 <motion.div key={index} variants={itemVariants}>
                   <AccordionItem
                     value={`item-${index}`}
-                    className="border-none px-8 py-1"
+                    className="border-none px-4 md:px-8 py-1"
                   >
-                    <AccordionTrigger className="group py-8 text-left hover:no-underline">
-                      <div className="flex w-full items-start gap-6">
+                    <AccordionTrigger className="group py-6 md:py-8 text-left hover:no-underline">
+                      <div className="flex w-full items-start gap-4 md:gap-6">
                         {/* Helpful icon */}
-                        <div className="mt-1 flex size-9 shrink-0 items-center justify-center rounded-2xl border border-primary/10 bg-primary/5">
+                        <div className="mt-1 flex size-8 md:size-9 shrink-0 items-center justify-center rounded-xl md:rounded-2xl border border-primary/10 bg-primary/5">
                           <HugeiconsIcon
                             icon={HelpCircleIcon}
                             strokeWidth={2.5}
-                            className="size-5 text-primary"
+                            className="size-4 md:size-5 text-primary"
                           />
                         </div>
 
                         {/* Question */}
-                        <span className="flex-1 pr-8 text-[17px] leading-tight font-medium tracking-tight text-foreground transition-colors group-hover:text-primary">
+                        <span className="flex-1 pr-6 md:pr-8 text-base md:text-[17px] leading-snug md:leading-tight font-medium tracking-tight text-foreground transition-colors group-hover:text-primary">
                           {item.question}
                         </span>
                       </div>
                     </AccordionTrigger>
 
-                    <AccordionContent className="pr-8 pb-8 pl-[54px] text-[17px] leading-relaxed text-muted-foreground">
+                    <AccordionContent className="pr-4 md:pr-8 pb-6 md:pb-8 pl-12 md:pl-[60px] text-sm md:text-[17px] leading-relaxed text-muted-foreground">
                       {item.answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -148,7 +148,7 @@ export function LandingFAQ() {
           <div className="rounded-2xl border border-border bg-muted/40 px-8 py-7">
             <p className="mb-3 text-muted-foreground">Still have a question?</p>
             <a
-              href="#"
+              href="mailto:support@job-tracker.noorulhassan.com"
               className="inline-flex items-center gap-2 font-medium text-primary hover:underline"
             >
               Reach out to us directly

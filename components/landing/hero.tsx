@@ -1,14 +1,5 @@
 "use client"
 
-/*
- * Product: JobTracker — Job search pipeline manager
- * Audience: Job seekers, especially in Pakistan & beyond
- * Design direction: Dark, premium SaaS, editorial, serious-professional
- * Palette: Near-black surface / indigo accent / white foreground
- * Font: Inter (system) — display weight 900, body weight 350
- */
-
-// ─── IMPORTS ────────────────────────────────────────────────────────────────
 import { useRef, useEffect } from "react"
 import { motion, useSpring, useInView, useTransform, Variants } from "motion/react"
 import Link from "next/link"
@@ -61,11 +52,11 @@ const mockupVariant: Variants = {
 
 // ─── STATUS PILL DATA ────────────────────────────────────────────────────────
 const STATUS_COLORS: Record<string, string> = {
-  APPLIED:   "bg-blue-500/15 text-blue-400 border-blue-500/20",
-  INTERVIEW: "bg-violet-500/15 text-violet-400 border-violet-500/20",
-  OFFER:     "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
-  REJECTED:  "bg-red-500/15 text-red-400 border-red-500/20",
-  SCREENING: "bg-amber-500/15 text-amber-400 border-amber-500/20",
+  APPLIED: "bg-blue-500/15 text-blue-500 border-blue-500/20",
+  INTERVIEW: "bg-violet-500/15 text-violet-500 border-violet-500/20",
+  OFFER: "bg-emerald-500/15 text-emerald-500 border-emerald-500/20",
+  REJECTED: "bg-red-500/15 text-red-500 border-red-500/20",
+  SCREENING: "bg-amber-500/15 text-amber-500 border-amber-500/20",
 }
 
 const MOCK_APPS = [
@@ -128,15 +119,15 @@ function AnimatedNumber({ value, suffix = "" }: { value: number; suffix?: string
 // ─── INLINE DASHBOARD MOCKUP ─────────────────────────────────────────────────
 function DashboardMockup() {
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d12] shadow-[0_32px_80px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.06)]">
+    <div className="w-full overflow-hidden rounded-2xl border border-border bg-card shadow-[0_32px_80px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.05)] dark:shadow-[0_32px_80px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.06)]">
       {/* Browser Chrome Bar */}
-      <div className="flex items-center gap-2 border-b border-white/6 bg-[#13131a] px-4 py-3">
+      <div className="flex items-center gap-2 border-b border-border bg-muted/50 px-4 py-3">
         <div className="flex gap-1.5">
-          <div className="size-2.5 rounded-full bg-red-500/70" />
+          <div className="size-2.5 rounded-full bg-destructive/70" />
           <div className="size-2.5 rounded-full bg-amber-500/70" />
           <div className="size-2.5 rounded-full bg-emerald-500/70" />
         </div>
-        <div className="mx-auto flex items-center gap-2 rounded-md bg-white/5 px-3 py-1 text-[10px] text-white/30">
+        <div className="mx-auto flex items-center gap-2 rounded-md bg-background/50 px-3 py-1 text-[10px] text-muted-foreground/60">
           <div className="size-2 rounded-full bg-emerald-500" />
           jobtracker.app/dashboard
         </div>
@@ -145,12 +136,12 @@ function DashboardMockup() {
       {/* Sidebar + Content */}
       <div className="flex min-h-[380px]">
         {/* Sidebar */}
-        <div className="hidden w-44 shrink-0 flex-col border-r border-white/6 bg-[#0f0f16] p-3 sm:flex">
+        <div className="hidden w-44 shrink-0 flex-col border-r border-border bg-muted/30 p-3 sm:flex">
           <div className="mb-4 flex items-center gap-2 px-2 py-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-indigo-500/20">
-              <HugeiconsIcon icon={BriefcaseIcon} className="size-3.5 text-indigo-400" strokeWidth={2} />
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
+              <HugeiconsIcon icon={BriefcaseIcon} className="size-3.5 text-primary" strokeWidth={2} />
             </div>
-            <span className="text-xs font-semibold text-white/80">JobTracker</span>
+            <span className="text-xs font-semibold text-foreground/80">JobTracker</span>
           </div>
           {[
             { label: "Dashboard", active: false },
@@ -162,8 +153,8 @@ function DashboardMockup() {
               className={cn(
                 "mb-0.5 rounded-lg px-3 py-2 text-[11px] font-medium transition-colors",
                 item.active
-                  ? "bg-indigo-500/15 text-indigo-300"
-                  : "text-white/35 hover:text-white/60"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground/60 hover:text-foreground/80"
               )}
             >
               {item.label}
@@ -174,21 +165,21 @@ function DashboardMockup() {
         {/* Main Content */}
         <div className="flex flex-1 flex-col">
           {/* Stats Row */}
-          <div className="grid grid-cols-3 gap-px border-b border-white/6 bg-white/5">
+          <div className="grid grid-cols-3 gap-px border-b border-border bg-border">
             {[
               { label: "Total", value: "24" },
               { label: "Interviews", value: "6" },
               { label: "Offers", value: "2" },
             ].map((s) => (
-              <div key={s.label} className="bg-[#0d0d12] px-4 py-3">
-                <div className="font-mono text-xl font-bold text-white">{s.value}</div>
-                <div className="text-[10px] text-white/35">{s.label}</div>
+              <div key={s.label} className="bg-card px-4 py-3">
+                <div className="font-mono text-xl font-bold text-foreground">{s.value}</div>
+                <div className="text-[10px] text-muted-foreground">{s.label}</div>
               </div>
             ))}
           </div>
 
           {/* Application Rows */}
-          <div className="flex-1 divide-y divide-white/5">
+          <div className="flex-1 divide-y divide-border">
             {MOCK_APPS.map((app, i) => (
               <motion.div
                 key={app.company}
@@ -198,16 +189,16 @@ function DashboardMockup() {
                 className="flex items-center justify-between gap-3 px-4 py-2.5"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-[10px] font-bold text-white/50">
+                  <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-[10px] font-bold text-muted-foreground">
                     {app.company[0]}
                   </div>
                   <div>
-                    <div className="text-[11px] font-semibold text-white/85">{app.company}</div>
-                    <div className="text-[10px] text-white/35">{app.role}</div>
+                    <div className="text-[11px] font-semibold text-foreground/85">{app.company}</div>
+                    <div className="text-[10px] text-muted-foreground/60">{app.role}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] text-white/25">{app.date}</span>
+                  <span className="text-[9px] text-muted-foreground/40">{app.date}</span>
                   <span
                     className={cn(
                       "rounded-full border px-2 py-0.5 text-[9px] font-semibold",
@@ -234,24 +225,21 @@ export const LandingHero = () => {
   const words = headline.split(" ")
 
   return (
-    <section className="relative min-h-[100dvh] overflow-hidden bg-[#07070a] pt-24 pb-20 lg:pt-28">
+    <section className="relative min-h-dvh overflow-hidden pt-24 pb-20 lg:pt-28">
       {/* Ambient background layers */}
       <div className="pointer-events-none absolute inset-0">
-        {/* Radial glow top-centre */}
-        <div className="absolute -top-32 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-indigo-600/10 blur-[120px]" />
-        {/* Secondary glow bottom-right */}
-        <div className="absolute right-0 bottom-0 h-[400px] w-[500px] rounded-full bg-violet-600/8 blur-[100px]" />
+
         {/* Grid dot pattern */}
         <div
-          className="absolute inset-0 opacity-[0.18]"
+          className="absolute inset-0 opacity-[0.2]"
           style={{
             backgroundImage:
-              "radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px)",
+              "radial-gradient(circle, var(--foreground) 1px, transparent 1px)",
             backgroundSize: "28px 28px",
           }}
         />
         {/* Fade-to-background at bottom */}
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#07070a] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-background to-transparent" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-12">
@@ -265,10 +253,10 @@ export const LandingHero = () => {
               variants={fadeUp}
               initial="hidden"
               animate="visible"
-              className="mb-8 inline-flex items-center gap-2 rounded-full border border-indigo-500/25 bg-indigo-500/10 px-4 py-1.5"
+              className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5"
             >
-              <div className="size-1.5 rounded-full bg-indigo-400 shadow-[0_0_6px_2px_rgba(99,102,241,0.6)]" />
-              <span className="text-[11px] font-semibold tracking-[0.1em] text-indigo-300 uppercase">
+              <div className="size-1.5 rounded-full bg-primary shadow-[0_0_6px_2px_rgba(0,0,0,0.1)] dark:shadow-[0_0_6px_2px_rgba(255,255,255,0.2)]" />
+              <span className="text-[11px] font-semibold tracking-[0.1em] text-primary uppercase">
                 {hero.badge}
               </span>
             </motion.div>
@@ -278,7 +266,7 @@ export const LandingHero = () => {
               variants={stagger}
               initial="hidden"
               animate="visible"
-              className="text-[clamp(2.6rem,5.5vw,4.5rem)] font-[900] leading-[1.0] tracking-tight text-white"
+              className="text-[clamp(2.6rem,5.5vw,4.5rem)] font-[900] leading-[1.0] tracking-tight text-foreground"
               aria-label={headline}
             >
               {words.map((word, i) => (
@@ -289,12 +277,12 @@ export const LandingHero = () => {
                   style={
                     i >= words.length - 2
                       ? {
-                          background:
-                            "linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #c084fc 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                          backgroundClip: "text",
-                        }
+                        background:
+                          "linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #c084fc 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                      }
                       : undefined
                   }
                 >
@@ -309,7 +297,7 @@ export const LandingHero = () => {
               initial="hidden"
               animate="visible"
               transition={{ delay: 0.45 }}
-              className="mt-6 max-w-[480px] text-[clamp(1rem,2vw,1.15rem)] font-[350] leading-[1.7] text-white/50"
+              className="mt-6 max-w-[480px] text-[clamp(1rem,2vw,1.15rem)] font-[350] leading-[1.7] text-muted-foreground"
             >
               {hero.subheadline}
             </motion.p>
@@ -324,7 +312,7 @@ export const LandingHero = () => {
             >
               <MagneticButton
                 href={hero.ctaHref}
-                className="group inline-flex items-center gap-2.5 rounded-xl bg-indigo-500 px-7 py-3.5 text-[0.95rem] font-semibold text-white shadow-[0_4px_32px_rgba(99,102,241,0.45)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-indigo-400 hover:shadow-[0_8px_40px_rgba(99,102,241,0.55)]"
+                className="group inline-flex items-center gap-2.5 rounded-xl bg-primary px-7 py-3.5 text-[0.95rem] font-semibold text-primary-foreground shadow-[0_4px_32px_rgba(0,0,0,0.1)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90"
               >
                 {hero.cta}
                 <HugeiconsIcon
@@ -336,7 +324,7 @@ export const LandingHero = () => {
 
               <MagneticButton
                 href={hero.secondaryCtaHref}
-                className="inline-flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-[0.95rem] font-semibold text-white/75 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/8 hover:text-white"
+                className="inline-flex items-center gap-2.5 rounded-xl border border-border bg-secondary px-7 py-3.5 text-[0.95rem] font-semibold text-secondary-foreground backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-secondary/80"
               >
                 {hero.secondaryCta}
               </MagneticButton>
@@ -348,7 +336,7 @@ export const LandingHero = () => {
               initial="hidden"
               animate="visible"
               transition={{ delay: 0.65 }}
-              className="mt-8 flex flex-wrap items-center gap-5 text-[11px] font-medium tracking-wide text-white/30 uppercase"
+              className="mt-8 flex flex-wrap items-center gap-5 text-[11px] font-medium tracking-wide text-muted-foreground/60 uppercase"
             >
               {[
                 { icon: CheckmarkCircle01Icon, label: "Free forever" },
@@ -356,7 +344,7 @@ export const LandingHero = () => {
                 { icon: ChartLineData01Icon, label: "Built for job seekers" },
               ].map(({ icon, label }) => (
                 <span key={label} className="flex items-center gap-1.5">
-                  <HugeiconsIcon icon={icon} className="size-3.5 text-indigo-400" strokeWidth={2} />
+                  <HugeiconsIcon icon={icon} className="size-3.5 text-primary" strokeWidth={2} />
                   {label}
                 </span>
               ))}
@@ -378,14 +366,14 @@ export const LandingHero = () => {
               initial={{ opacity: 0, x: 24, y: 8 }}
               animate={{ opacity: 1, x: 0, y: 0 }}
               transition={{ delay: 1.2, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute -right-4 -top-5 flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0f0f16]/90 px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-md"
+              className="absolute -right-4 -top-5 flex items-center gap-3 rounded-2xl border border-border bg-card/90 px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.1)] dark:bg-card/90 backdrop-blur-md"
             >
               <div className="flex size-8 items-center justify-center rounded-xl bg-emerald-500/20">
-                <div className="size-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_2px_rgba(52,211,153,0.5)]" />
+                <div className="size-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_2px_rgba(52,211,153,0.3)]" />
               </div>
               <div>
-                <div className="text-[11px] font-semibold text-white">Offer Received 🎉</div>
-                <div className="text-[10px] text-white/35">Vercel · 2 hours ago</div>
+                <div className="text-[11px] font-semibold text-foreground">Offer Received 🎉</div>
+                <div className="text-[10px] text-muted-foreground">Vercel · 2 hours ago</div>
               </div>
             </motion.div>
 
@@ -394,14 +382,14 @@ export const LandingHero = () => {
               initial={{ opacity: 0, x: -24, y: -8 }}
               animate={{ opacity: 1, x: 0, y: 0 }}
               transition={{ delay: 1.4, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute -bottom-5 -left-4 flex items-center gap-3 rounded-2xl border border-white/10 bg-[#0f0f16]/90 px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-md"
+              className="absolute -bottom-5 -left-4 flex items-center gap-3 rounded-2xl border border-border bg-card/90 px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-md"
             >
-              <div className="flex size-8 items-center justify-center rounded-xl bg-indigo-500/20">
-                <HugeiconsIcon icon={ChartLineData01Icon} className="size-3.5 text-indigo-400" strokeWidth={2} />
+              <div className="flex size-8 items-center justify-center rounded-xl bg-primary/20">
+                <HugeiconsIcon icon={ChartLineData01Icon} className="size-3.5 text-primary" strokeWidth={2} />
               </div>
               <div>
-                <div className="font-mono text-lg font-black text-white leading-none">92%</div>
-                <div className="text-[10px] text-white/35">Stay organized rate</div>
+                <div className="font-mono text-lg font-black text-foreground leading-none">92%</div>
+                <div className="text-[10px] text-muted-foreground">Stay organized rate</div>
               </div>
             </motion.div>
           </motion.div>
@@ -415,7 +403,7 @@ export const LandingHero = () => {
           transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="mt-28"
         >
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/8 bg-white/5 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border lg:grid-cols-4">
             {[
               { raw: 10000, suffix: "+", label: "Applications Tracked" },
               { raw: 5000, suffix: "+", label: "Active Job Seekers" },
@@ -424,12 +412,12 @@ export const LandingHero = () => {
             ].map((stat, i) => (
               <div
                 key={i}
-                className="group bg-[#0d0d12] px-8 py-8 text-center transition-colors duration-300 hover:bg-indigo-500/5"
+                className="group bg-card px-8 py-8 text-center transition-colors duration-300 hover:bg-primary/5"
               >
-                <div className="font-mono text-[clamp(1.8rem,3.5vw,2.6rem)] font-[900] leading-none text-white">
+                <div className="font-mono text-[clamp(1.8rem,3.5vw,2.6rem)] font-[900] leading-none text-foreground">
                   <AnimatedNumber value={stat.raw} suffix={stat.suffix} />
                 </div>
-                <div className="mt-2 text-[11px] font-medium tracking-wide text-white/35 uppercase">
+                <div className="mt-2 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
                   {stat.label}
                 </div>
               </div>
